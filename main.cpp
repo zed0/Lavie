@@ -24,8 +24,8 @@ int main(int argc, char *argv[])
 	ircNet.connect(argv[1], argv[2]);
 	ircNet.joinChannel("#stuff");
 	ircNet.joinChannel("#brownies");
-	ircNet.sendMsg("#stuff", "Ohayo everyone!");
-	ircNet.sendMsg("#brownies", "Ohayo everyone!");
+	ircNet.sendMsg("#stuff", "Ohayo everybody!");
+	ircNet.sendMsg("#brownies", "Ohayo everybody!");
 	string message;
 	while(true)
 	{
