@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 						{
 							reply += " " + words.at(i);
 						}
-						reply += ". Giggle.";
+						reply += ", Giggle.";
 					}
 					else
 					{
