@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 					}
 					else
 					{
-						reply += " Slrp.";
+						reply += " Slrp. Slrp! SLRP!!!";
 					}
 					ircNet.sendMsg(msgChannel(message), reply);
 				}
