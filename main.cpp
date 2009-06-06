@@ -9,7 +9,6 @@ vector<string> msgWords(string message);
 string msgNick(string message);
 string msgChannel(string message);
 
-
 irc ircNet;
 
 int main(int argc, char *argv[])
@@ -28,7 +27,7 @@ int main(int argc, char *argv[])
 		{
 			ircNet.setNick(argv[i+1]);
 		}
-		if(string(argv[i]) == "--channel" && argc>i+1)
+		else if(string(argv[i]) == "--channel" && argc>i+1)
 		{
 			ircNet.joinChannel(argv[i+1]);
 		}
@@ -44,7 +43,7 @@ int main(int argc, char *argv[])
 			if(message.find("PRIVMSG",0) != string::npos)
 			{
 				vector<string> words = msgWords(message);
-				if(words.at(0) == "!reply")
+				else if(words.at(0) == "!reply")
 				{
 					string reply = msgNick(message) + ":";
 					if(words.size() > 1)
@@ -61,7 +60,7 @@ int main(int argc, char *argv[])
 					}
 					ircNet.sendMsg(msgChannel(message), reply);
 				}
-				if(words.at(0) == "!flip")
+				else if(words.at(0) == "!flip")
 				{
 					srand(time(NULL));
 					string reply = msgNick(message);
@@ -75,11 +74,11 @@ int main(int argc, char *argv[])
 					}
 					ircNet.sendMsg(msgChannel(message), reply);
 				}
-				if(words.at(0) == "!flop")
+				else if(words.at(0) == "!flop")
 				{
 					ircNet.sendMe(msgChannel(message), "flops about on the floor.");
 				}
-				if(words.at(0) == "!count")
+				else if(words.at(0) == "!count")
 				{
 					stringstream ss;
 					string reply;
@@ -87,7 +86,7 @@ int main(int argc, char *argv[])
 					reply = ss.str();
 					ircNet.sendMsg(msgChannel(message), reply);
 				}
-				if(words.at(0) == "!become")
+				else if(words.at(0) == "!become")
 				{
 					if(words.size() < 2)
 					{
@@ -98,7 +97,7 @@ int main(int argc, char *argv[])
 						ircNet.setNick(words.at(1));
 					}
 				}
-				if(words.at(0) == ircNet.getNick() + ":" && words.at(1) == "you")
+				else if(words.at(0) == ircNet.getNick() + ":" && words.at(1) == "you")
 				{
 					string reply = msgNick(message) + ": No, you";
 					for(int i=2; i<words.size(); ++i)
