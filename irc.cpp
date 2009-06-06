@@ -39,27 +39,31 @@ int irc::connect(string hostname, string port)
 	}
 	cout << "connected to " << hostname << ":" << port << endl;
 	connected = true;
+	for(int i=0; i<channels.size(); ++i)
+	{
+		server->sendMsg("JOIN " + channels.at(i));
+		string message;
+		while(message.find("JOIN :" + channels.at(i), 0) != string::npos)
+		{
+			server->recieveMsg(message);
+		}
+	}
 	return 0;
 }
 
 int irc::joinChannel(string channel)
 {
-	if(!connected)
+	channels.push_back(channel);
+	if(connected)
 	{
-		cerr << "Error: cannot join channels while not connected" << endl;
-		return 1;
-	}
-	else
-	{
-		channels.push_back(channel);
 		server->sendMsg("JOIN " + channel);
 		string message;
 		while(message.find("JOIN :" + channel, 0) != string::npos)
 		{
 			server->recieveMsg(message);
 		}
-		cout << "joined " << channel << endl;
 	}
+	cout << "joined " << channel << endl;
 	return 0;
 }
 

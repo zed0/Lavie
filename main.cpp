@@ -14,18 +14,27 @@ irc ircNet;
 
 int main(int argc, char *argv[])
 {
-	if(argc !=3)
+	if(argc <3)
 	{
-		cerr << "usage: " + string(argv[0]) + " hostname port" << endl;
+		cerr << "usage: " + string(argv[0]) + " hostname port [options]" << endl;
 		return 1;
 	}
 	ircNet.setNick("Lavie");
 	ircNet.setDesc("An IRC bot made by zed0 and Zaer");
-	ircNet.connect(argv[1], argv[2]);
 	ircNet.joinChannel("#stuff");
-	ircNet.joinChannel("#brownies");
+	for(int i=0; i<argc; ++i)
+	{
+		if(string(argv[i]) == "--nick" && argc>i+1)
+		{
+			ircNet.setNick(argv[i+1]);
+		}
+		if(string(argv[i]) == "--channel" && argc>i+1)
+		{
+			ircNet.joinChannel(argv[i+1]);
+		}
+	}
+	ircNet.connect(argv[1], argv[2]);
 	ircNet.sendMsg("#stuff", "Ohayo everybody!");
-	ircNet.sendMsg("#brownies", "Ohayo everybody!");
 	string message;
 	while(true)
 	{
