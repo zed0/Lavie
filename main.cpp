@@ -8,8 +8,18 @@ using namespace std;
 vector<string> msgWords(string message);
 string msgNick(string message);
 string msgChannel(string message);
+int setTimedMsg(string channel, string message, int seconds);
+
+struct timedMsg
+{
+	int id;
+	time_t time;
+	string channel;
+	string message;
+};
 
 irc ircNet;
+vector<timedMsg> timedMessages;
 
 int main(int argc, char *argv[])
 {
@@ -37,6 +47,15 @@ int main(int argc, char *argv[])
 	string message;
 	while(true)
 	{
+		for(int i=0; i<timedMessages.size(); ++i)
+		{
+			if(time(NULL) > timedMessages.at(i).time)
+			{
+				ircNet.sendMsg(timedMessages.at(i).channel, timedMessages.at(i).message);
+				timedMessages.erase(timedMessages.begin()+i);
+				--i;
+			}
+		}
 		if(ircNet.checkMessages(message))
 		{
 			cout << message;
@@ -97,6 +116,11 @@ int main(int argc, char *argv[])
 						ircNet.setNick(words.at(1));
 					}
 				}
+				else if(words.at(0) == "!time")
+				{
+					ircNet.sendMsg(msgChannel(message), "Setting timer for 10 seconds.");
+					setTimedMsg(msgChannel(message), "Times up", 10);
+				}
 				else if(words.at(0) == ircNet.getNick() + ":" && words.at(1) == "you")
 				{
 					string reply = msgNick(message) + ": No, you";
@@ -147,5 +171,16 @@ string msgChannel(string message)
 	return result;
 }
 
-
+int setTimedMsg(string channel, string message, int seconds)
+{
+	static int id = 0;
+	++id;
+	timedMsg result;
+	result.id = id;
+	result.time = time(NULL) + seconds;
+	result.channel = channel;
+	result.message = message;
+	timedMessages.push_back(result);
+	return 0;
+}
 
