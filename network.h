@@ -4,6 +4,9 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 
 using namespace std;
 
@@ -11,6 +14,7 @@ class network
 {
 	private:
 		struct addrinfo *res;
+		string currentBuffer;
 		int sockfd;
 	public:
 		//initializer takeing the hostname and port (as a string)

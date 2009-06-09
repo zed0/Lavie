@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 			if(message.find("PRIVMSG",0) != string::npos)
 			{
 				vector<string> words = msgWords(message);
-				else if(words.at(0) == "!reply")
+				if(words.at(0) == "!reply")
 				{
 					string reply = msgNick(message) + ":";
 					if(words.size() > 1)

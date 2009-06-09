@@ -77,7 +77,7 @@ int irc::checkMessages(string &buffer)
 	else
 	{
 		string message;
-		if(server->recieveMsg(message))
+		if(server->recieveMsg(message) > 0)
 		{
 			//Deal with PINGs
 			if(message.substr(0,4) == "PING")

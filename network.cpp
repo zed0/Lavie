@@ -48,10 +48,11 @@ network::network(string hostname, string port)
 	}
 
 	sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+	fcntl(sockfd, F_SETFL, O_NONBLOCK);
 	connect(sockfd, res->ai_addr, res->ai_addrlen);
 }
 
-int network::recieveMsg(string &buffer)
+int network::recieveMsg(string &result)
 {
 	int numbytes = 0;
 	const int MAX_SIZE = 10000;
@@ -60,9 +61,13 @@ int network::recieveMsg(string &buffer)
 	numbytes = recv(sockfd, temp, MAX_SIZE-1, 0);
 	if(numbytes == -1)
 	{
-		perror("recv");
-		close(sockfd);
-		freeaddrinfo(res);
+		if(errno != EWOULDBLOCK)
+		{
+			perror("recv");
+			close(sockfd);
+			freeaddrinfo(res);
+			return -1;
+		}
 		return 0;
 	}
 	else if(numbytes == 0)
@@ -70,13 +75,13 @@ int network::recieveMsg(string &buffer)
 		cout << "Disconnected" << endl;
 		close(sockfd);
 		freeaddrinfo(res);
-		return 0;
+		return -1;
 	}
 	else
 	{
 		temp[numbytes] = '\0';
-		buffer = string(temp);
-		cout << buffer;
+		result = string(temp);
+		cout << result;
 	}
 	return numbytes;
 }
