@@ -121,14 +121,17 @@ int main(int argc, char *argv[])
 					ircNet.sendMsg(msgChannel(message), "Setting timer for 10 seconds.");
 					setTimedMsg(msgChannel(message), "Times up", 10);
 				}
-				else if(words.at(0) == ircNet.getNick() + ":" && words.at(1) == "you")
+				else if(words.at(0) == ircNet.getNick() + ":")
 				{
-					string reply = msgNick(message) + ": No, you";
-					for(int i=2; i<words.size(); ++i)
+					if(words.at(1) == "you" || words.at(1) == "You")
 					{
-						reply += " " + words.at(i);
+						string reply = msgNick(message) + ": No, you";
+						for(int i=2; i<words.size(); ++i)
+						{
+							reply += " " + words.at(i);
+						}
+						ircNet.sendMsg(msgChannel(message), reply);
 					}
-					ircNet.sendMsg(msgChannel(message), reply);
 				}
 			}
 		}

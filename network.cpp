@@ -48,8 +48,33 @@ network::network(string hostname, string port)
 	}
 
 	sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-	fcntl(sockfd, F_SETFL, O_NONBLOCK);
+	//Uncommenting the following line would enable non-blocking sockets which whore cpu.
+	//fcntl(sockfd, F_SETFL, O_NONBLOCK);
 	connect(sockfd, res->ai_addr, res->ai_addrlen);
+}
+
+int network::recvTimeout(int s, char *buf, int len, int timeout)
+{
+	//This function is shamelessly stolen from Beej's Guide to Network programming
+	fd_set fds;
+	int n;
+	struct timeval tv;
+
+	//set up the file descriptor set
+	FD_ZERO(&fds);
+	FD_SET(s, &fds);
+
+	//set up the struct timeval for the timeout
+	tv.tv_sec = timeout;
+	tv.tv_usec = 0;
+
+	//wait until timeout or data received
+	n = select(s+1, &fds, NULL, NULL, &tv);
+	if(n == 0) return -2; //timeout
+	if(n == -1) return -1; //error
+
+	//data must be here, so do a normal recv()
+	return recv(s, buf, len, 0);
 }
 
 int network::recieveMsg(string &result)
@@ -58,18 +83,23 @@ int network::recieveMsg(string &result)
 	const int MAX_SIZE = 10000;
 	char temp[MAX_SIZE];
 
-	numbytes = recv(sockfd, temp, MAX_SIZE-1, 0);
+	//recieve input with a timeout of a second
+	numbytes = recvTimeout(sockfd, temp, MAX_SIZE-1, 1);
+	//timeout
+	if(numbytes == -2)
+	{
+		//do nothing \o/
+		return -2;
+	}
+	//error
 	if(numbytes == -1)
 	{
-		if(errno != EWOULDBLOCK)
-		{
-			perror("recv");
-			close(sockfd);
-			freeaddrinfo(res);
-			return -1;
-		}
-		return 0;
+		perror("recv");
+		close(sockfd);
+		freeaddrinfo(res);
+		return -1;
 	}
+	//disconnected
 	else if(numbytes == 0)
 	{
 		cout << "Disconnected" << endl;
@@ -77,13 +107,14 @@ int network::recieveMsg(string &result)
 		freeaddrinfo(res);
 		return -1;
 	}
+	//recieved a message
 	else
 	{
 		temp[numbytes] = '\0';
 		result = string(temp);
-		cout << result;
+		cout << result;// << endl << endl;
+		return numbytes;
 	}
-	return numbytes;
 }
 
 int network::sendMsg(string message)
