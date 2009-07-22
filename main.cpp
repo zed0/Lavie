@@ -1,3 +1,7 @@
+#define BOT_NICK "Lavie"
+#define BOT_DESC "An IRC bot made by zed0 and Zaer"
+#define COMMAND_CHAR '!'
+
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
@@ -6,16 +10,20 @@
 using namespace std;
 
 vector<string> msgWords(string message);
+vector<string> tokenize(string message);
 string msgNick(string message);
 string msgChannel(string message);
-int setTimedMsg(string channel, string message, int seconds);
+int setTimedMsg(string message, vector<string> words, int seconds);
+int handleCommand(string message, vector<string> words);
+template<class T> T fromString(const string& s);
+template<class T> string toString(const T& t);
 
 struct timedMsg
 {
 	int id;
 	time_t time;
-	string channel;
 	string message;
+	vector<string> words;
 };
 
 irc ircNet;
@@ -51,7 +59,8 @@ int main(int argc, char *argv[])
 		{
 			if(time(NULL) > timedMessages.at(i).time)
 			{
-				ircNet.sendMsg(timedMessages.at(i).channel, timedMessages.at(i).message);
+				handleCommand(timedMessages.at(i).message, timedMessages.at(i).words);
+				//ircNet.sendMsg(timedMessages.at(i).channel, timedMessages.at(i).message);
 				timedMessages.erase(timedMessages.begin()+i);
 				--i;
 			}
@@ -62,64 +71,10 @@ int main(int argc, char *argv[])
 			if(message.find("PRIVMSG",0) != string::npos)
 			{
 				vector<string> words = msgWords(message);
-				if(words.at(0) == "!reply")
+				if(words.at(0).at(0) == COMMAND_CHAR) //if the line begins with our command char then handle commands
 				{
-					string reply = msgNick(message) + ":";
-					if(words.size() > 1)
-					{
-						for(int i=1; i<words.size(); ++i)
-						{
-							reply += " " + words.at(i);
-						}
-						reply += ", Giggle.";
-					}
-					else
-					{
-						reply += " Slrp. Slrp! SLRP!!!";
-					}
-					ircNet.sendMsg(msgChannel(message), reply);
-				}
-				else if(words.at(0) == "!flip")
-				{
-					srand(time(NULL));
-					string reply = msgNick(message);
-					if(rand()%2 >= 1)
-					{
-						reply += ": Heads!";
-					}
-					else
-					{
-						reply += ": Tails!";
-					}
-					ircNet.sendMsg(msgChannel(message), reply);
-				}
-				else if(words.at(0) == "!flop")
-				{
-					ircNet.sendMe(msgChannel(message), "flops about on the floor.");
-				}
-				else if(words.at(0) == "!count")
-				{
-					stringstream ss;
-					string reply;
-					ss << msgNick(message) << ": You gave " << words.size() << " parameters.";
-					reply = ss.str();
-					ircNet.sendMsg(msgChannel(message), reply);
-				}
-				else if(words.at(0) == "!become")
-				{
-					if(words.size() < 2)
-					{
-						ircNet.sendMsg(msgChannel(message), msgNick(message) + ": you need to give a name");
-					}
-					else
-					{
-						ircNet.setNick(words.at(1));
-					}
-				}
-				else if(words.at(0) == "!time")
-				{
-					ircNet.sendMsg(msgChannel(message), "Setting timer for 10 seconds.");
-					setTimedMsg(msgChannel(message), "Times up", 10);
+					words.at(0).erase(0,1); //strip the command character off the front
+					handleCommand(message, words);
 				}
 				else if(words.at(0) == ircNet.getNick() + ":")
 				{
@@ -142,9 +97,14 @@ int main(int argc, char *argv[])
 //tokenize the message
 vector<string> msgWords(string message)
 {
-	vector<string> result;
 	size_t pos = message.find(" :") + 2;
-	istringstream iss(message.substr(pos));
+	return tokenize(message.substr(pos));
+}
+
+vector<string> tokenize(string message)
+{
+	vector<string> result;
+	istringstream iss(message);
 	string current;
 	while(iss >> current)
 	{
@@ -174,16 +134,131 @@ string msgChannel(string message)
 	return result;
 }
 
-int setTimedMsg(string channel, string message, int seconds)
+int setTimedMsg(string message, vector<string> words, int seconds)
 {
 	static int id = 0;
 	++id;
 	timedMsg result;
 	result.id = id;
 	result.time = time(NULL) + seconds;
-	result.channel = channel;
 	result.message = message;
+	result.words = words;
 	timedMessages.push_back(result);
 	return 0;
 }
 
+int handleCommand(string message, vector<string> words)
+{
+	if(words.at(0) == "reply")
+	{
+		string reply = msgNick(message) + ":";
+		if(words.size() > 1)
+		{
+			for(int i=1; i<words.size(); ++i)
+			{
+				reply += " " + words.at(i);
+			}
+			reply += ", Giggle.";
+		}
+		else
+		{
+			reply += " Slrp. Slrp! SLRP!!!";
+		}
+		ircNet.sendMsg(msgChannel(message), reply);
+	}
+	else if(words.at(0) == "flip")
+	{
+		srand(time(NULL));
+		string reply = msgNick(message);
+		if(rand()%2 >= 1)
+		{
+			reply += ": Heads!";
+		}
+		else
+		{
+			reply += ": Tails!";
+		}
+		ircNet.sendMsg(msgChannel(message), reply);
+	}
+	else if(words.at(0) == "flop")
+	{
+		ircNet.sendMe(msgChannel(message), "flops about on the floor.");
+	}
+	else if(words.at(0) == "count")
+	{
+		stringstream ss;
+		string reply;
+		ss << msgNick(message) << ": You gave " << words.size() << " parameters.";
+		reply = ss.str();
+		ircNet.sendMsg(msgChannel(message), reply);
+	}
+	else if(words.at(0) == "become")
+	{
+		if(words.size() < 2)
+		{
+			ircNet.sendMsg(msgChannel(message), msgNick(message) + ": you need to give a name");
+		}
+		else
+		{
+			ircNet.setNick(words.at(1));
+		}
+	}
+	else if(words.at(0) == "time")
+	{
+		if(words.size() < 2)
+		{
+			ircNet.sendMsg(msgChannel(message), msgNick(message) + ": Format: !time seconds");
+		}
+		else
+		{
+			int time = fromString<int>(words.at(1));
+			if(time <= 0)
+			{
+				ircNet.sendMsg(msgChannel(message), msgNick(message) + ": Invalid time (" + words.at(1) + ")");
+			}
+			else
+			{
+				ircNet.sendMsg(msgChannel(message), "Setting timer for " + toString<int>(time) + " seconds.");
+				setTimedMsg(message, tokenize("reply Times up"), time);
+			}
+		}
+	}
+	else if(words.at(0) == "in")
+	{
+		if(words.size() < 3)
+		{
+			ircNet.sendMsg(msgChannel(message), msgNick(message) + ": Format: !in seconds command");
+		}
+		else
+		{
+			int time = fromString<int>(words.at(1));
+			if(time <= 0)
+			{
+				ircNet.sendMsg(msgChannel(message), msgNick(message) + ": Invalid time (" + words.at(1) + ")");
+			}
+			else
+			{
+				ircNet.sendMsg(msgChannel(message), msgNick(message) + ": Okay, will do in " + toString<int>(time) + " seconds.");
+				vector<string> command = words;
+				command.erase(command.begin(), command.begin()+2);
+				setTimedMsg(message, command, time);
+			}
+		}
+	}
+	return 0;
+}
+
+template<class T> string toString(const T& t)
+{
+	ostringstream stream;
+	stream << t;
+	return stream.str();
+}
+
+template<class T> T fromString(const string& s)
+{
+	istringstream stream(s);
+	T t;
+	stream >> t;
+	return t;
+}
