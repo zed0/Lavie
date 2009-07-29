@@ -36,3 +36,62 @@ vector<string> stringUtils::tokenize(string message)
 	}
 	return result;
 }
+
+int stringUtils::parseTime(string time)
+{
+	int result = 0;
+	string current = time;
+	int multiplier = 0;
+	while(current.length())
+	{
+		char lastChar = current.at(current.length()-1);
+		if(charIsNum(lastChar))
+		{
+			int i = 1;
+			while(i <= current.length() && charIsNum(current.at(current.length()-i)))
+			{
+				++i;
+			}
+			string number = current.substr(current.length()+1-i,i);
+			current.erase(current.length()+1-i,i);
+			result += multiplier * stringUtils::fromString<int>(number);
+		}
+		else
+		{
+			if(lastChar == 's')
+			{
+				multiplier = 1;
+			}
+			else if(lastChar == 'm')
+			{
+				multiplier = 60;
+			}
+			else if(lastChar == 'h')
+			{
+				multiplier = 3600;
+			}
+			else if(lastChar == 'd')
+			{
+				multiplier = 86400;
+			}
+			else
+			{
+				return 0;
+			}
+			current.erase(current.end()-1);
+		}
+	}
+	return result;
+}
+
+bool stringUtils::charIsNum(char character)
+{
+	if(character >= '0' && character <= '9')
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}

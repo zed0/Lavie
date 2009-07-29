@@ -12,6 +12,8 @@ using namespace std;
 
 int setTimedMsg(string message, vector<string> words, int seconds);
 int handleCommand(string message, vector<string> words);
+bool charIsNum(char character);
+int parseTime(string time);
 
 struct timedMsg
 {
@@ -162,7 +164,7 @@ int handleCommand(string message, vector<string> words)
 		}
 		else
 		{
-			int time = stringUtils::fromString<int>(words.at(1));
+			int time = stringUtils::parseTime(words.at(1));
 			if(time <= 0)
 			{
 				ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": Invalid time (" + words.at(1) + ")");
@@ -178,14 +180,14 @@ int handleCommand(string message, vector<string> words)
 	{
 		if(words.size() < 3)
 		{
-			ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": Format: !in seconds command");
+			ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": Format: !in time command");
 		}
 		else
 		{
-			int time = stringUtils::fromString<int>(words.at(1));
+			int time = stringUtils::parseTime(words.at(1));
 			if(time <= 0)
 			{
-				ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": Invalid time (" + words.at(1) + ")");
+				ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": Invalid time (" + words.at(1) + "), please use format: 1d2h3m4s");
 			}
 			else
 			{
@@ -198,3 +200,4 @@ int handleCommand(string message, vector<string> words)
 	}
 	return 0;
 }
+

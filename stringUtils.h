@@ -14,6 +14,10 @@ namespace stringUtils
 	vector<string> msgWords(string message);
 	//tokenize the message
 	vector<string> tokenize(string message);
+	//checks whether the character is numeric
+	bool charIsNum(char character);
+	//parses the string into a int given a time formated as 1d2h3m4s etc
+	int parseTime(string time);
 
 	//Due to C++ being rubish you have to declare and implement templates in the same file,
 	//thus these are implemented here.
