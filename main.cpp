@@ -13,8 +13,8 @@ using namespace std;
 
 int setTimedMsg(string message, vector<string> words, int seconds);
 int handleCommand(string message, vector<string> words);
-string loadQuotes(string fileName);
-string getQuote(int quoteNum);
+string loadQuestions(string fileName);
+string getQuestion(int questionNum);
 
 struct timedMsg
 {
@@ -57,9 +57,9 @@ int main(int argc, char *argv[])
 			ircNet.joinChannel(argv[i+1]);
 			++i;
 		}
-		if(string(argv[i]) == "--quotefile" && argc>i+1)
+		if(string(argv[i]) == "--questionfile" && argc>i+1)
 		{
-			cout << loadQuotes(argv[i+1]) << endl;
+			cout << loadQuestions(argv[i+1]) << endl;
 			++i;
 		}
 	}
@@ -214,64 +214,64 @@ int handleCommand(string message, vector<string> words)
 			}
 		}
 	}
-	else if(words.at(0) == "quote")
+	else if(words.at(0) == "question")
 	{
 		int number = 1;
 		if(words.size() > 1)
 		{
 			number = stringUtils::fromString<int>(words.at(1));
 		}
-		ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": " + getQuote(number));
+		ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": " + getQuestion(number));
 	}
-	else if(words.at(0) == "loadquotes")
+	else if(words.at(0) == "loadquestions")
 	{
-		ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": " + loadQuotes("quotes.txt"));
+		ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": " + loadQuestions("quotes.txt"));
 	}
-	else if(words.at(0) == "randquote")
+	else if(words.at(0) == "randquestion")
 	{
 		int number = (rand()%(questions.size()-1));
-		ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": " + stringUtils::toString(number) + ": " + getQuote(number));
+		ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": " + stringUtils::toString(number) + ": " + getQuestion(number));
 	}
 	return 0;
 }
 
-string getQuote(int quoteNum)
+string getQuestion(int questionNum)
 {
-	if(quoteNum > questions.size() || quoteNum <= 0)
+	if(questionNum > questions.size() || questionNum <= 0)
 	{
-		return "Quote does not exist.";
+		return "Question does not exist.";
 	}
 	else
 	{
-		return questions.at(quoteNum-1).question;
+		return questions.at(questionNum-1).question;
 	}
 }
 
-string loadQuotes(string fileName)
+string loadQuestions(string fileName)
 {
-	ifstream quoteFile(fileName.c_str(), ifstream::in);
-	if(quoteFile.good())
+	ifstream questionFile(fileName.c_str(), ifstream::in);
+	if(questionFile.good())
 	{
 		int id = 0;
 		string buffer;
-		while(quoteFile.good())
+		while(questionFile.good())
 		{
 			buffer = "";
 			question result;
 			result.id = ++id;
 			result.question = "";
-			while(getline(quoteFile, buffer) && buffer != ".")
+			while(getline(questionFile, buffer) && buffer != ".")
 			{
 				result.question += buffer;
 			}
-			if(quoteFile.good())
+			if(questionFile.good())
 			{
 				questions.push_back(result);
-				//cout << "Quote " << id << " " << result.question << endl;
+				//cout << "Question " << id << " " << result.question << endl;
 			}
 		}
-		quoteFile.close();
-		return "Finished loading " + stringUtils::toString(id-1) + " quotes from " + fileName;
+		questionFile.close();
+		return "Finished loading " + stringUtils::toString(id-1) + " questions from " + fileName + " (total now " + stringUtils::toString(questions.size()) + ").";
 	}
 	else
 	{
