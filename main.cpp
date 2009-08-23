@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <sstream>
+#include <fstream>
 #include "irc.h"
 #include "stringUtils.h"
 
@@ -12,8 +13,8 @@ using namespace std;
 
 int setTimedMsg(string message, vector<string> words, int seconds);
 int handleCommand(string message, vector<string> words);
-bool charIsNum(char character);
-int parseTime(string time);
+string loadQuotes(string fileName);
+string getQuote(int quoteNum);
 
 struct timedMsg
 {
@@ -23,8 +24,16 @@ struct timedMsg
 	vector<string> words;
 };
 
+struct question
+{
+	int id;
+	string question;
+	string answer;
+};
+
 irc ircNet;
 vector<timedMsg> timedMessages;
+vector<question> questions;
 
 int main(int argc, char *argv[])
 {
@@ -33,18 +42,25 @@ int main(int argc, char *argv[])
 		cerr << "usage: " + string(argv[0]) + " hostname port [options]" << endl;
 		return 1;
 	}
-	ircNet.setNick("Lavie");
-	ircNet.setDesc("An IRC bot made by zed0 and Zaer");
+	ircNet.setNick(BOT_NICK);
+	ircNet.setDesc(BOT_DESC);
 	ircNet.joinChannel("#stuff");
 	for(int i=0; i<argc; ++i)
 	{
 		if(string(argv[i]) == "--nick" && argc>i+1)
 		{
 			ircNet.setNick(argv[i+1]);
+			++i;
 		}
-		else if(string(argv[i]) == "--channel" && argc>i+1)
+		if(string(argv[i]) == "--channel" && argc>i+1)
 		{
 			ircNet.joinChannel(argv[i+1]);
+			++i;
+		}
+		if(string(argv[i]) == "--quotefile" && argc>i+1)
+		{
+			cout << loadQuotes(argv[i+1]) << endl;
+			++i;
 		}
 	}
 	ircNet.connect(argv[1], argv[2]);
@@ -198,6 +214,67 @@ int handleCommand(string message, vector<string> words)
 			}
 		}
 	}
+	else if(words.at(0) == "quote")
+	{
+		int number = 1;
+		if(words.size() > 1)
+		{
+			number = stringUtils::fromString<int>(words.at(1));
+		}
+		ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": " + getQuote(number));
+	}
+	else if(words.at(0) == "loadquotes")
+	{
+		ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": " + loadQuotes("quotes.txt"));
+	}
+	else if(words.at(0) == "randquote")
+	{
+		int number = (rand()%(questions.size()-1));
+		ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": " + stringUtils::toString(number) + ": " + getQuote(number));
+	}
 	return 0;
 }
 
+string getQuote(int quoteNum)
+{
+	if(quoteNum > questions.size() || quoteNum <= 0)
+	{
+		return "Quote does not exist.";
+	}
+	else
+	{
+		return questions.at(quoteNum-1).question;
+	}
+}
+
+string loadQuotes(string fileName)
+{
+	ifstream quoteFile(fileName.c_str(), ifstream::in);
+	if(quoteFile.good())
+	{
+		int id = 0;
+		string buffer;
+		while(quoteFile.good())
+		{
+			buffer = "";
+			question result;
+			result.id = ++id;
+			result.question = "";
+			while(getline(quoteFile, buffer) && buffer != ".")
+			{
+				result.question += buffer;
+			}
+			if(quoteFile.good())
+			{
+				questions.push_back(result);
+				//cout << "Quote " << id << " " << result.question << endl;
+			}
+		}
+		quoteFile.close();
+		return "Finished loading " + stringUtils::toString(id-1) + " quotes from " + fileName;
+	}
+	else
+	{
+		return "There was a problem loading from " + fileName + ".";
+	}
+}

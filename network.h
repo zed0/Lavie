@@ -19,7 +19,7 @@ class network
 	public:
 		//initializer takeing the hostname and port (as a string)
 		network(string hostname, string port);
-		//a version of recv with a timeout (will block until then)
+		//a version of recv with a timeout (in microseconds, will block until then)
 		int recvTimeout(int s, char *buf, int len, int timeout);
 		//recieve a message from the network (put in the buffer, returns message length)
 		int recieveMsg(string &buffer);

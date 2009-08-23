@@ -65,8 +65,8 @@ int network::recvTimeout(int s, char *buf, int len, int timeout)
 	FD_SET(s, &fds);
 
 	//set up the struct timeval for the timeout
-	tv.tv_sec = timeout;
-	tv.tv_usec = 0;
+	tv.tv_sec = 0;
+	tv.tv_usec = timeout;
 
 	//wait until timeout or data received
 	n = select(s+1, &fds, NULL, NULL, &tv);
@@ -83,8 +83,8 @@ int network::recieveMsg(string &result)
 	const int MAX_SIZE = 10000;
 	char temp[MAX_SIZE];
 
-	//recieve input with a timeout of a second
-	numbytes = recvTimeout(sockfd, temp, MAX_SIZE-1, 1);
+	//recieve input with a timeout of 1/10 of a second
+	numbytes = recvTimeout(sockfd, temp, MAX_SIZE-1, 100000);
 	//timeout
 	if(numbytes == -2)
 	{
