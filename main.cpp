@@ -1,6 +1,7 @@
 #define BOT_NICK "Lavie"
 #define BOT_DESC "An IRC bot made by zed0 and Zaer"
 #define COMMAND_CHAR '!'
+#define QUIZ_TIME 10 //time between question, answer and next question in the quiz
 
 #include <cstdlib>
 #include <ctime>
@@ -98,7 +99,7 @@ int main(int argc, char *argv[])
 					currentQuestion = 0;
 					if(continuousQuestions == true)
 					{
-						setTimedMsg("", stringUtils::msgChannel(message), stringUtils::tokenize("randquestion"), 5);
+						setTimedMsg("", stringUtils::msgChannel(message), stringUtils::tokenize("randquestion"), QUIZ_TIME);
 					}
 				}
 				else if(words.at(0) == ircNet.getNick() + ":")
@@ -254,7 +255,7 @@ int handleCommand(string nick, string channel, vector<string> words)
 		}
 		currentQuestion = number;
 		ircNet.sendMsg(channel, reply + getQuestion(number));
-		setTimedMsg(nick, channel, stringUtils::tokenize("answer " + stringUtils::toString(number)), 5);
+		setTimedMsg(nick, channel, stringUtils::tokenize("answer " + stringUtils::toString(number)), QUIZ_TIME);
 	}
 	else if(words.at(0) == "loadquestions")
 	{
@@ -266,7 +267,7 @@ int handleCommand(string nick, string channel, vector<string> words)
 		int number = (rand()%(questions.size()))+1;
 		currentQuestion = number;
 		ircNet.sendMsg(channel, reply + getQuestion(number));
-		setTimedMsg(nick, channel, stringUtils::tokenize("answer " + stringUtils::toString(number)), 5);
+		setTimedMsg(nick, channel, stringUtils::tokenize("answer " + stringUtils::toString(number)), QUIZ_TIME);
 	}
 	else if(words.at(0) == "answer")
 	{
@@ -291,7 +292,7 @@ int handleCommand(string nick, string channel, vector<string> words)
 	else if(words.at(0) == "startquiz")
 	{
 		continuousQuestions = true;
-		setTimedMsg("", channel , stringUtils::tokenize("randquestion"), 5);
+		setTimedMsg("", channel , stringUtils::tokenize("randquestion"), QUIZ_TIME);
 		ircNet.sendMsg(channel, reply + "Starting quiz!");
 	}
 	else if(words.at(0) == "stopquiz")
