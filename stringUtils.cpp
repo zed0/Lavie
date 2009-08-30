@@ -95,3 +95,17 @@ bool stringUtils::charIsNum(char character)
 		return false;
 	}
 }
+
+string stringUtils::joinWords(vector<string> words)
+{
+	string result = "";
+	for(int i=0; i<words.size(); ++i)
+	{
+		result += words.at(i);
+		if(i < words.size() - 1)
+		{
+			result += " ";
+		}
+	}
+	return result;
+}

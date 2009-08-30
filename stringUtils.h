@@ -18,6 +18,8 @@ namespace stringUtils
 	bool charIsNum(char character);
 	//parses the string into a int given a time formated as 1d2h3m4s etc
 	int parseTime(string time);
+	//joins a vector of strings, turning it in to a single space seperated string
+	string joinWords(vector<string> words);
 
 	//Due to C++ being rubish you have to declare and implement templates in the same file,
 	//thus these are implemented here.

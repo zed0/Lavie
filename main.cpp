@@ -11,16 +11,18 @@
 
 using namespace std;
 
-int setTimedMsg(string message, vector<string> words, int seconds);
-int handleCommand(string message, vector<string> words);
+int setTimedMsg(string nick, string channel, vector<string> words, int seconds);
+int handleCommand(string nick, string channel, vector<string> words);
 string loadQuestions(string fileName);
 string getQuestion(int questionNum);
+string getAnswer(int questionNum);
 
 struct timedMsg
 {
 	int id;
 	time_t time;
-	string message;
+	string nick;
+	string channel;
 	vector<string> words;
 };
 
@@ -34,6 +36,8 @@ struct question
 irc ircNet;
 vector<timedMsg> timedMessages;
 vector<question> questions;
+int currentQuestion;
+bool continuousQuestions = false;
 
 int main(int argc, char *argv[])
 {
@@ -72,7 +76,7 @@ int main(int argc, char *argv[])
 		{
 			if(time(NULL) > timedMessages.at(i).time)
 			{
-				handleCommand(timedMessages.at(i).message, timedMessages.at(i).words);
+				handleCommand(timedMessages.at(i).nick, timedMessages.at(i).channel, timedMessages.at(i).words);
 				timedMessages.erase(timedMessages.begin()+i);
 				--i;
 			}
@@ -86,7 +90,16 @@ int main(int argc, char *argv[])
 				if(words.at(0).at(0) == COMMAND_CHAR) //if the line begins with our command char then handle commands
 				{
 					words.at(0).erase(0,1); //strip the command character off the front
-					handleCommand(message, words);
+					handleCommand(stringUtils::msgNick(message), stringUtils::msgChannel(message), words);
+				}
+				else if(currentQuestion != 0 && stringUtils::joinWords(words) == questions.at(currentQuestion-1).answer) //Handle valid answers to the current question
+				{
+					ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": Correct answer!  Congratulations!");
+					currentQuestion = 0;
+					if(continuousQuestions == true)
+					{
+						setTimedMsg("", stringUtils::msgChannel(message), stringUtils::tokenize("randquestion"), 5);
+					}
 				}
 				else if(words.at(0) == ircNet.getNick() + ":")
 				{
@@ -106,66 +119,78 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-int setTimedMsg(string message, vector<string> words, int seconds)
+int setTimedMsg(string nick, string channel, vector<string> words, int seconds)
 {
 	static int id = 0;
 	++id;
 	timedMsg result;
 	result.id = id;
 	result.time = time(NULL) + seconds;
-	result.message = message;
+	result.nick = nick;
+	result.channel = channel;
 	result.words = words;
 	timedMessages.push_back(result);
 	return 0;
 }
 
-int handleCommand(string message, vector<string> words)
+int handleCommand(string nick, string channel, vector<string> words)
 {
+	string reply = "";
+	if(nick != "")
+	{
+		reply += nick + ": ";
+	}
 	if(words.at(0) == "reply")
 	{
-		string reply = stringUtils::msgNick(message) + ":";
 		if(words.size() > 1)
 		{
-			for(int i=1; i<words.size(); ++i)
+			//note: editing the words vector like this is naughty, may be better to use the commented out code instead.
+			words.erase(words.begin());
+			reply += stringUtils::joinWords(words);
+			/*for(int i=1; i<words.size(); ++i)
 			{
-				reply += " " + words.at(i);
-			}
+				reply += words.at(i);
+				if(i < words.size() - 1)
+				{
+					reply += " ";
+				}
+			}*/
 			reply += ", Giggle.";
 		}
 		else
 		{
-			reply += " Slrp. Slrp! SLRP!!!";
+			reply += "Slrp. Slrp! SLRP!!!";
 		}
-		ircNet.sendMsg(stringUtils::msgChannel(message), reply);
+		ircNet.sendMsg(channel, reply);
 	}
 	else if(words.at(0) == "flip")
 	{
 		srand(time(NULL));
-		string reply = stringUtils::msgNick(message);
 		if(rand()%2 >= 1)
 		{
-			reply += ": Heads!";
+			reply += "Heads!";
 		}
 		else
 		{
-			reply += ": Tails!";
+			reply += "Tails!";
 		}
-		ircNet.sendMsg(stringUtils::msgChannel(message), reply);
+		ircNet.sendMsg(channel, reply);
 	}
 	else if(words.at(0) == "flop")
 	{
-		ircNet.sendMe(stringUtils::msgChannel(message), "flops about on the floor.");
+		ircNet.sendMe(channel, "flops about on the floor.");
 	}
 	else if(words.at(0) == "count")
 	{
-		string reply = stringUtils::msgNick(message) + ": You gave " + stringUtils::toString(words.size()) + " parameters.";
-		ircNet.sendMsg(stringUtils::msgChannel(message), reply);
+		string reply = "You gave " + stringUtils::toString(words.size()) + " parameters.";
+		ircNet.sendMsg(channel, reply);
 	}
 	else if(words.at(0) == "become")
 	{
 		if(words.size() < 2)
 		{
-			ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": you need to give a name");
+			reply += "You need to give a name";
+			ircNet.sendMsg(channel, reply);
 		}
 		else
 		{
@@ -176,19 +201,22 @@ int handleCommand(string message, vector<string> words)
 	{
 		if(words.size() < 2)
 		{
-			ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": Format: !time seconds");
+			reply += "Format: !time seconds";
+			ircNet.sendMsg(channel, reply);
 		}
 		else
 		{
 			int time = stringUtils::parseTime(words.at(1));
 			if(time <= 0)
 			{
-				ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": Invalid time (" + words.at(1) + ")");
+				reply += "Invalid time (" + words.at(1) + ")";
+				ircNet.sendMsg(channel, reply);
 			}
 			else
 			{
-				ircNet.sendMsg(stringUtils::msgChannel(message), "Setting timer for " + stringUtils::toString(time) + " seconds.");
-				setTimedMsg(message, stringUtils::tokenize("reply Times up"), time);
+				reply += "Setting timer for " + stringUtils::toString(time) + " seconds.";
+				ircNet.sendMsg(channel, reply);
+				setTimedMsg(nick, channel, stringUtils::tokenize("reply Times up"), time);
 			}
 		}
 	}
@@ -196,21 +224,24 @@ int handleCommand(string message, vector<string> words)
 	{
 		if(words.size() < 3)
 		{
-			ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": Format: !in time command");
+			reply += "Format: !in time command";
+			ircNet.sendMsg(channel, reply);
 		}
 		else
 		{
 			int time = stringUtils::parseTime(words.at(1));
 			if(time <= 0)
 			{
-				ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": Invalid time (" + words.at(1) + "), please use format: 1d2h3m4s");
+				reply += "Invalid time (" + words.at(1) + "), please use format: 1d2h3m4s";
+				ircNet.sendMsg(channel, reply);
 			}
 			else
 			{
-				ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": Okay, will do in " + stringUtils::toString(time) + " seconds.");
+				reply += "Okay, will do in " + stringUtils::toString(time) + " seconds.";
+				ircNet.sendMsg(channel, reply);
 				vector<string> command = words;
 				command.erase(command.begin(), command.begin()+2);
-				setTimedMsg(message, command, time);
+				setTimedMsg(nick, channel, command, time);
 			}
 		}
 	}
@@ -221,16 +252,56 @@ int handleCommand(string message, vector<string> words)
 		{
 			number = stringUtils::fromString<int>(words.at(1));
 		}
-		ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": " + getQuestion(number));
+		currentQuestion = number;
+		ircNet.sendMsg(channel, reply + getQuestion(number));
+		setTimedMsg(nick, channel, stringUtils::tokenize("answer " + stringUtils::toString(number)), 5);
 	}
 	else if(words.at(0) == "loadquestions")
 	{
-		ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": " + loadQuestions("quotes.txt"));
+		reply += loadQuestions("questions.txt");
+		ircNet.sendMsg(channel, reply);
 	}
 	else if(words.at(0) == "randquestion")
 	{
-		int number = (rand()%(questions.size()-1));
-		ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": " + stringUtils::toString(number) + ": " + getQuestion(number));
+		int number = (rand()%(questions.size()))+1;
+		currentQuestion = number;
+		ircNet.sendMsg(channel, reply + getQuestion(number));
+		setTimedMsg(nick, channel, stringUtils::tokenize("answer " + stringUtils::toString(number)), 5);
+	}
+	else if(words.at(0) == "answer")
+	{
+		if(words.size() < 2)
+		{
+			ircNet.sendMsg(channel, reply + "Format: !answer id");
+		}
+		else
+		{
+			int number = stringUtils::fromString<int>(words.at(1));
+			if(number == currentQuestion)
+			{
+				ircNet.sendMsg(channel, reply + "No one got the answer which was: \"" + getAnswer(number) + "\"");
+				currentQuestion = 0;
+				if(continuousQuestions == true)
+				{
+					setTimedMsg("", channel, stringUtils::tokenize("randquestion"), 5);
+				}
+			}
+		}
+	}
+	else if(words.at(0) == "startquiz")
+	{
+		continuousQuestions = true;
+		setTimedMsg("", channel , stringUtils::tokenize("randquestion"), 5);
+		ircNet.sendMsg(channel, reply + "Starting quiz!");
+	}
+	else if(words.at(0) == "stopquiz")
+	{
+		continuousQuestions = false;
+		ircNet.sendMsg(channel, reply + "Will stop quiz after this question.");
+	}
+	else if(words.at(0) == "questioninfo")
+	{
+		ircNet.sendMsg(channel, reply + "Current question ID: " + stringUtils::toString(currentQuestion));
 	}
 	return 0;
 }
@@ -247,7 +318,19 @@ string getQuestion(int questionNum)
 	}
 }
 
-string loadQuestions(string fileName)
+string getAnswer(int questionNum)
+{
+	if(questionNum > questions.size() || questionNum <= 0)
+	{
+		return "Question does not exist.";
+	}
+	else
+	{
+		return questions.at(questionNum-1).answer;
+	}
+}
+
+string loadQuotes(string fileName)
 {
 	ifstream questionFile(fileName.c_str(), ifstream::in);
 	if(questionFile.good())
@@ -263,6 +346,51 @@ string loadQuestions(string fileName)
 			while(getline(questionFile, buffer) && buffer != ".")
 			{
 				result.question += buffer;
+			}
+			if(questionFile.good())
+			{
+				questions.push_back(result);
+				//cout << "Question " << id << " " << result.question << endl;
+			}
+		}
+		questionFile.close();
+		return "Finished loading " + stringUtils::toString(id-1) + " questions from " + fileName + " (total now " + stringUtils::toString(questions.size()) + ").";
+	}
+	else
+	{
+		return "There was a problem loading from " + fileName + ".";
+	}
+}
+
+string loadQuestions(string fileName)
+{
+	ifstream questionFile(fileName.c_str(), ifstream::in);
+	if(questionFile.good())
+	{
+		int id = 0;
+		string buffer;
+		while(questionFile.good())
+		{
+			buffer = "";
+			question result;
+			result.id = ++id;
+			result.question = "";
+			result.answer = "";
+			if(getline(questionFile, buffer) && buffer != "Q:")
+			{
+				return "Syntax error in " + fileName + ".";
+			}
+			while(getline(questionFile, buffer) && buffer != "A:")
+			{
+				if(buffer == ".")
+				{
+					return "Syntax error in " + fileName + ".";
+				}
+				result.question += buffer;
+			}
+			while(getline(questionFile, buffer) && buffer != ".")
+			{
+				result.answer += buffer;
 			}
 			if(questionFile.good())
 			{
