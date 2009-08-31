@@ -31,7 +31,10 @@ struct question
 {
 	int id;
 	string question;
-	string answer;
+	//string answer;
+	vector<string> answer;
+	string category;
+	string file;
 };
 
 irc ircNet;
@@ -43,6 +46,7 @@ bool continuousQuestions = false;
 
 int main(int argc, char *argv[])
 {
+	srand(time(NULL));
 	if(argc <3)
 	{
 		cerr << "usage: " + string(argv[0]) + " hostname port [options]" << endl;
@@ -94,13 +98,20 @@ int main(int argc, char *argv[])
 					words.at(0).erase(0,1); //strip the command character off the front
 					handleCommand(stringUtils::msgNick(message), stringUtils::msgChannel(message), words);
 				}
-				else if(currentQuestion != 0 && stringUtils::joinWords(words) == questions.at(currentQuestion-1).answer) //Handle valid answers to the current question
+				else if(currentQuestion != 0) //Handle valid answers to the current question
 				{
-					ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": Correct answer!  Congratulations!");
-					currentQuestion = 0;
-					if(continuousQuestions == true)
+					for(int i=0; i<questions.at(currentQuestion-1).answer.size(); ++i)
 					{
-						setTimedMsg("", stringUtils::msgChannel(message), stringUtils::tokenize("randquestion"), quizTiming);
+						if(stringUtils::joinWords(words) == questions.at(currentQuestion-1).answer.at(i))
+						{
+							ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": Correct answer!  Congratulations!");
+							currentQuestion = 0;
+							if(continuousQuestions == true)
+							{
+								setTimedMsg("", stringUtils::msgChannel(message), stringUtils::tokenize("randquestion"), quizTiming);
+							}
+							break;
+						}
 					}
 				}
 				else if(words.at(0) == ircNet.getNick() + ":")
@@ -167,7 +178,6 @@ int handleCommand(string nick, string channel, vector<string> words)
 	}
 	else if(words.at(0) == "flip")
 	{
-		srand(time(NULL));
 		if(rand()%2 >= 1)
 		{
 			reply += "Heads!";
@@ -260,15 +270,28 @@ int handleCommand(string nick, string channel, vector<string> words)
 	}
 	else if(words.at(0) == "loadquestions")
 	{
-		reply += loadQuestions("questions.txt");
-		ircNet.sendMsg(channel, reply);
+		if(words.size() < 2)
+		{
+			ircNet.sendMsg(channel, reply + "Format: !loadquestions file");
+		}
+		else
+		{
+			ircNet.sendMsg(channel, reply + loadQuestions("questions/" + words.at(1)));
+		}
 	}
 	else if(words.at(0) == "randquestion")
 	{
-		int number = (rand()%(questions.size()))+1;
-		currentQuestion = number;
-		ircNet.sendMsg(channel, reply + getQuestion(number));
-		setTimedMsg(nick, channel, stringUtils::tokenize("answer " + stringUtils::toString(number)), quizTiming);
+		if(questions.size() > 0)
+		{
+			int number = (rand()%(questions.size()))+1;
+			currentQuestion = number;
+			ircNet.sendMsg(channel, reply + getQuestion(number));
+			setTimedMsg(nick, channel, stringUtils::tokenize("answer " + stringUtils::toString(number)), quizTiming);
+		}
+		else
+		{
+			ircNet.sendMsg(channel, reply + "No questions");
+		}
 	}
 	else if(words.at(0) == "answer")
 	{
@@ -303,7 +326,7 @@ int handleCommand(string nick, string channel, vector<string> words)
 	}
 	else if(words.at(0) == "questioninfo")
 	{
-		ircNet.sendMsg(channel, reply + "Current question ID: " + stringUtils::toString(currentQuestion));
+		ircNet.sendMsg(channel, reply + "Question ID: " + stringUtils::toString(currentQuestion) + "; Category: " + questions.at(currentQuestion-1).category + "; File: " + questions.at(currentQuestion-1).file);
 	}
 	else if(words.at(0) == "quiztime")
 	{
@@ -317,6 +340,11 @@ int handleCommand(string nick, string channel, vector<string> words)
 			ircNet.sendMsg(channel, reply + "Setting quiz timing to " + stringUtils::toString(newTiming) + ".");
 			quizTiming = newTiming;
 		}
+	}
+	else if(words.at(0) == "clearquestions")
+	{
+		questions.clear();
+		ircNet.sendMsg(channel, reply + "Cleared questions, please use !loadquestions to add some more.");
 	}
 	return 0;
 }
@@ -341,7 +369,7 @@ string getAnswer(int questionNum)
 	}
 	else
 	{
-		return questions.at(questionNum-1).answer;
+		return questions.at(questionNum-1).answer.at(0);
 	}
 }
 
@@ -384,6 +412,47 @@ string loadQuestions(string fileName)
 	{
 		int id = 0;
 		string buffer;
+		stringstream currentQuestion;
+		while(getline(questionFile, buffer))
+		{
+			if(buffer.size()<5)
+			{
+				continue;
+			}
+			question result;
+			result.id = ++id;
+			result.file = fileName;
+			char seperator = buffer.at(0);
+			buffer.erase(0,1);
+			currentQuestion << buffer;
+			string part;
+			getline(currentQuestion, part, seperator);
+			result.category = part;
+			while(getline(currentQuestion, part, seperator))
+			{
+				if(part == "")
+				{
+					break;
+				}
+				else
+				{
+					result.answer.push_back(part);
+				}
+			}
+			getline(currentQuestion, part);
+			result.question = part;
+			questions.push_back(result);
+			currentQuestion.clear();
+/*
+			cout << "Question " << result.id << "; file: " << result.file << "; category:" << result.category << "; answers: ";
+			for(int i=0; i<result.answer.size(); ++i)
+			{
+				cout << result.answer.at(i) << "/";
+			}
+			cout << "/" << result.question << endl;
+*/
+		}
+/*
 		while(questionFile.good())
 		{
 			buffer = "";
@@ -413,6 +482,7 @@ string loadQuestions(string fileName)
 				//cout << "Question " << id << " " << result.question << endl;
 			}
 		}
+*/
 		questionFile.close();
 		return "Finished loading " + stringUtils::toString(id-1) + " questions from " + fileName + " (total now " + stringUtils::toString(questions.size()) + ").";
 	}
