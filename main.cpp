@@ -38,6 +38,7 @@ irc ircNet;
 vector<timedMsg> timedMessages;
 vector<question> questions;
 int currentQuestion;
+int quizTiming = QUIZ_TIME;
 bool continuousQuestions = false;
 
 int main(int argc, char *argv[])
@@ -99,7 +100,7 @@ int main(int argc, char *argv[])
 					currentQuestion = 0;
 					if(continuousQuestions == true)
 					{
-						setTimedMsg("", stringUtils::msgChannel(message), stringUtils::tokenize("randquestion"), QUIZ_TIME);
+						setTimedMsg("", stringUtils::msgChannel(message), stringUtils::tokenize("randquestion"), quizTiming);
 					}
 				}
 				else if(words.at(0) == ircNet.getNick() + ":")
@@ -255,7 +256,7 @@ int handleCommand(string nick, string channel, vector<string> words)
 		}
 		currentQuestion = number;
 		ircNet.sendMsg(channel, reply + getQuestion(number));
-		setTimedMsg(nick, channel, stringUtils::tokenize("answer " + stringUtils::toString(number)), QUIZ_TIME);
+		setTimedMsg(nick, channel, stringUtils::tokenize("answer " + stringUtils::toString(number)), quizTiming);
 	}
 	else if(words.at(0) == "loadquestions")
 	{
@@ -267,7 +268,7 @@ int handleCommand(string nick, string channel, vector<string> words)
 		int number = (rand()%(questions.size()))+1;
 		currentQuestion = number;
 		ircNet.sendMsg(channel, reply + getQuestion(number));
-		setTimedMsg(nick, channel, stringUtils::tokenize("answer " + stringUtils::toString(number)), QUIZ_TIME);
+		setTimedMsg(nick, channel, stringUtils::tokenize("answer " + stringUtils::toString(number)), quizTiming);
 	}
 	else if(words.at(0) == "answer")
 	{
@@ -284,7 +285,7 @@ int handleCommand(string nick, string channel, vector<string> words)
 				currentQuestion = 0;
 				if(continuousQuestions == true)
 				{
-					setTimedMsg("", channel, stringUtils::tokenize("randquestion"), 5);
+					setTimedMsg("", channel, stringUtils::tokenize("randquestion"), quizTiming);
 				}
 			}
 		}
@@ -292,7 +293,7 @@ int handleCommand(string nick, string channel, vector<string> words)
 	else if(words.at(0) == "startquiz")
 	{
 		continuousQuestions = true;
-		setTimedMsg("", channel , stringUtils::tokenize("randquestion"), QUIZ_TIME);
+		setTimedMsg("", channel , stringUtils::tokenize("randquestion"), quizTiming);
 		ircNet.sendMsg(channel, reply + "Starting quiz!");
 	}
 	else if(words.at(0) == "stopquiz")
@@ -303,6 +304,19 @@ int handleCommand(string nick, string channel, vector<string> words)
 	else if(words.at(0) == "questioninfo")
 	{
 		ircNet.sendMsg(channel, reply + "Current question ID: " + stringUtils::toString(currentQuestion));
+	}
+	else if(words.at(0) == "quiztime")
+	{
+		if(words.size() < 2)
+		{
+			ircNet.sendMsg(channel, reply + "The quiz timing is currently set to " + stringUtils::toString(quizTiming) + ".");
+		}
+		else
+		{
+			int newTiming = stringUtils::fromString<int>(words.at(1));
+			ircNet.sendMsg(channel, reply + "Setting quiz timing to " + stringUtils::toString(newTiming) + ".");
+			quizTiming = newTiming;
+		}
 	}
 	return 0;
 }
