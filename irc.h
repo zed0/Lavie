@@ -1,4 +1,7 @@
+#ifndef NETWORK_H
+#define NETWORK_H
 #include "network.h"
+#endif
 #include <vector>
 
 using namespace std;

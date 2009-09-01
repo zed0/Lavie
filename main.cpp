@@ -8,6 +8,7 @@
 #include <sstream>
 #include <fstream>
 #include "irc.h"
+#include "http.h"
 #include "stringUtils.h"
 
 using namespace std;
@@ -346,6 +347,13 @@ int handleCommand(string nick, string channel, vector<string> words)
 		questions.clear();
 		ircNet.sendMsg(channel, reply + "Cleared questions, please use !loadquestions to add some more.");
 	}
+	else if(words.at(0) == "httpget")
+	{
+		string result;
+		http httpNet(string("zed0.uwcs.co.uk"));
+		result = httpNet.get("/");
+		//ircNet.sendMsg(channel, reply + result);
+	}
 	return 0;
 }
 
@@ -370,38 +378,6 @@ string getAnswer(int questionNum)
 	else
 	{
 		return questions.at(questionNum-1).answer.at(0);
-	}
-}
-
-string loadQuotes(string fileName)
-{
-	ifstream questionFile(fileName.c_str(), ifstream::in);
-	if(questionFile.good())
-	{
-		int id = 0;
-		string buffer;
-		while(questionFile.good())
-		{
-			buffer = "";
-			question result;
-			result.id = ++id;
-			result.question = "";
-			while(getline(questionFile, buffer) && buffer != ".")
-			{
-				result.question += buffer;
-			}
-			if(questionFile.good())
-			{
-				questions.push_back(result);
-				//cout << "Question " << id << " " << result.question << endl;
-			}
-		}
-		questionFile.close();
-		return "Finished loading " + stringUtils::toString(id-1) + " questions from " + fileName + " (total now " + stringUtils::toString(questions.size()) + ").";
-	}
-	else
-	{
-		return "There was a problem loading from " + fileName + ".";
 	}
 }
 
@@ -452,37 +428,6 @@ string loadQuestions(string fileName)
 			cout << "/" << result.question << endl;
 */
 		}
-/*
-		while(questionFile.good())
-		{
-			buffer = "";
-			question result;
-			result.id = ++id;
-			result.question = "";
-			result.answer = "";
-			if(getline(questionFile, buffer) && buffer != "Q:")
-			{
-				return "Syntax error in " + fileName + ".";
-			}
-			while(getline(questionFile, buffer) && buffer != "A:")
-			{
-				if(buffer == ".")
-				{
-					return "Syntax error in " + fileName + ".";
-				}
-				result.question += buffer;
-			}
-			while(getline(questionFile, buffer) && buffer != ".")
-			{
-				result.answer += buffer;
-			}
-			if(questionFile.good())
-			{
-				questions.push_back(result);
-				//cout << "Question " << id << " " << result.question << endl;
-			}
-		}
-*/
 		questionFile.close();
 		return "Finished loading " + stringUtils::toString(id-1) + " questions from " + fileName + " (total now " + stringUtils::toString(questions.size()) + ").";
 	}
