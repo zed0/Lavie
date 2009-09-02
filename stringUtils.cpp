@@ -109,3 +109,67 @@ string stringUtils::joinWords(vector<string> words)
 	}
 	return result;
 }
+
+string stringUtils::stripProtocol(string url)
+{
+	size_t found;
+	found = url.find("://");
+	if(found != string::npos)
+	{
+		url.erase(0, found+3);
+	}
+	return url;
+}
+
+string stringUtils::urlHostname(string url)
+{
+	url = stripProtocol(url);
+	size_t found;
+	found = url.find("/");
+	if(found != string::npos)
+	{
+		url.erase(found);
+	}
+	found = url.find(":");
+	if(found != string::npos)
+	{
+		url.erase(found);
+	}
+	return url;
+}
+
+string stringUtils::urlPath(string url)
+{
+	url = stripProtocol(url);
+	size_t found;
+	found = url.find("/");
+	if(found != string::npos)
+	{
+		url.erase(0, found);
+		return url;
+	}
+	else
+	{
+		return "/";
+	}
+}
+
+string stringUtils::urlPort(string url)
+{
+	url = stripProtocol(url);
+	size_t found;
+	found = url.find("/");
+	if(found != string::npos)
+	{
+		url.erase(found);
+	}
+	found = url.find(":");
+	if(found != string::npos)
+	{
+		return url.erase(0, found+1);
+	}
+	else
+	{
+		return "80"; //default to returning the http port
+	}
+}

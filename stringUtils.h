@@ -20,6 +20,12 @@ namespace stringUtils
 	int parseTime(string time);
 	//joins a vector of strings, turning it in to a single space seperated string
 	string joinWords(vector<string> words);
+	//remove the protocol from the start of a url
+	string stripProtocol(string url);
+	//some functions to get various parts of a url:
+	string urlHostname(string url);
+	string urlPath(string url);
+	string urlPort(string url);
 
 	//Due to C++ being rubish you have to declare and implement templates in the same file,
 	//thus these are implemented here.

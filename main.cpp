@@ -349,10 +349,26 @@ int handleCommand(string nick, string channel, vector<string> words)
 	}
 	else if(words.at(0) == "httpget")
 	{
-		string result;
-		http httpNet(string("zed0.uwcs.co.uk"));
-		result = httpNet.get("/");
-		//ircNet.sendMsg(channel, reply + result);
+		string hostname = "zed0.uwcs.co.uk";
+		string path = "/";
+		string port = "80";
+		if(words.size() > 1)
+		{
+			hostname = stringUtils::urlHostname(words.at(1));
+			path = stringUtils::urlPath(words.at(1));
+			port = stringUtils::urlPort(words.at(1));
+		}
+		cout << "Getting " << hostname << " " << path << " " << port << endl;
+		http httpNet(hostname, port);
+		string result = httpNet.get(path);
+		//cout << result << endl;
+	}
+	else if(words.at(0) == "test")
+	{
+		if(words.size() > 1)
+		{
+			ircNet.sendMsg(channel, reply + "Hostname: " + stringUtils::urlHostname(words.at(1)) + " Path: " + stringUtils::urlPath(words.at(1)) + " Port: " + stringUtils::urlPort(words.at(1)));
+		}
 	}
 	return 0;
 }

@@ -4,7 +4,6 @@ using namespace std;
 
 http::http(string hostname, string portname)
 {
-	cout << "debug4" << endl;
 	host = hostname;
 	port = portname;
 	server = new network(host, port);
