@@ -20,11 +20,22 @@ string http::get(string path)
 	server->sendMsg("Host: " + host + ":" + port);
 	server->sendMsg("Connection: close");
 	server->sendMsg("");
-	string result;
+	stringstream total;
+	string buffer;
+	string header;
+	string data = "";
 	string message;
 	while(server->recieveMsg(message) > 0)
 	{
-		result += message;
+		total << message;
 	}
-	return result;
+	while(getline(total, buffer) && buffer.find_first_not_of("\r\n") != string::npos)
+	{
+		header += buffer + "\n";
+	}
+	while(getline(total, buffer))
+	{
+		data += buffer + "\n";
+	}
+	return data;
 }

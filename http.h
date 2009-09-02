@@ -2,6 +2,7 @@
 #define NETWORK_H
 #include "network.h"
 #endif
+#include <sstream>
 
 using namespace std;
 

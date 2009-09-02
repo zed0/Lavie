@@ -277,7 +277,7 @@ int handleCommand(string nick, string channel, vector<string> words)
 		}
 		else
 		{
-			ircNet.sendMsg(channel, reply + loadQuestions("questions/" + words.at(1)));
+			ircNet.sendMsg(channel, reply + loadQuestions(words.at(1)));
 		}
 	}
 	else if(words.at(0) == "randquestion")
@@ -397,58 +397,87 @@ string getAnswer(int questionNum)
 	}
 }
 
-string loadQuestions(string fileName)
+void loadFile(string fileName, stringstream &result)
 {
 	ifstream questionFile(fileName.c_str(), ifstream::in);
 	if(questionFile.good())
 	{
-		int id = 0;
 		string buffer;
-		stringstream currentQuestion;
 		while(getline(questionFile, buffer))
 		{
-			if(buffer.size()<5)
-			{
-				continue;
-			}
-			question result;
-			result.id = ++id;
-			result.file = fileName;
-			char seperator = buffer.at(0);
-			buffer.erase(0,1);
-			currentQuestion << buffer;
-			string part;
-			getline(currentQuestion, part, seperator);
-			result.category = part;
-			while(getline(currentQuestion, part, seperator))
-			{
-				if(part == "")
-				{
-					break;
-				}
-				else
-				{
-					result.answer.push_back(part);
-				}
-			}
-			getline(currentQuestion, part);
-			result.question = part;
-			questions.push_back(result);
-			currentQuestion.clear();
-/*
-			cout << "Question " << result.id << "; file: " << result.file << "; category:" << result.category << "; answers: ";
-			for(int i=0; i<result.answer.size(); ++i)
-			{
-				cout << result.answer.at(i) << "/";
-			}
-			cout << "/" << result.question << endl;
-*/
+			result << buffer + "\n";
 		}
 		questionFile.close();
-		return "Finished loading " + stringUtils::toString(id-1) + " questions from " + fileName + " (total now " + stringUtils::toString(questions.size()) + ").";
 	}
 	else
 	{
-		return "There was a problem loading from " + fileName + ".";
+		result.setstate(ios_base::failbit);
 	}
+}
+
+void loadHttp(string url, stringstream &result)
+{
+	string hostname = stringUtils::urlHostname(url);
+	string path = stringUtils::urlPath(url);
+	string port = stringUtils::urlPort(url);
+	cout << "Getting " << hostname << " " << path << " " << port << endl;
+	http httpNet(hostname, port);
+	string httpData = httpNet.get(path);
+	result << httpData;
+}
+
+string loadQuestions(string fileName)
+{
+	stringstream questionFile;
+	if(fileName.find("http://")!=string::npos)
+	{
+		loadHttp(fileName, questionFile);
+	}
+	else
+	{
+		loadFile("questions/"+fileName, questionFile);
+	}
+	int id = 0;
+	string buffer;
+	stringstream currentQuestion;
+	while(getline(questionFile, buffer))
+	{
+		if(buffer.size()<5)
+		{
+			continue;
+		}
+		question result;
+		result.id = ++id;
+		result.file = fileName;
+		char seperator = buffer.at(0);
+		buffer.erase(0,1);
+		currentQuestion << buffer;
+		string part;
+		getline(currentQuestion, part, seperator);
+		result.category = part;
+		while(getline(currentQuestion, part, seperator))
+		{
+			if(part == "")
+			{
+				break;
+			}
+			else
+			{
+				result.answer.push_back(part);
+			}
+		}
+		getline(currentQuestion, part);
+		result.question = part;
+		questions.push_back(result);
+		currentQuestion.clear();
+/*
+		cout << "Question " << result.id << "; file: " << result.file << "; category:" << result.category << "; answers: ";
+		for(int i=0; i<result.answer.size(); ++i)
+		{
+			cout << result.answer.at(i) << "/";
+		}
+		cout << "/" << result.question << endl;
+*/
+	}
+	return "Finished loading " + stringUtils::toString(id) + " questions from " + fileName + " (total now " + stringUtils::toString(questions.size()) + ").";
 }
