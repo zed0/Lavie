@@ -38,12 +38,19 @@ struct question
 	string file;
 };
 
+struct alias
+{
+	string word;
+	vector<string> command;
+};
+
 irc ircNet;
 vector<timedMsg> timedMessages;
 vector<question> questions;
 int currentQuestion;
 int quizTiming = QUIZ_TIME;
 bool continuousQuestions = false;
+vector<alias> aliases;
 
 int main(int argc, char *argv[])
 {
@@ -363,11 +370,32 @@ int handleCommand(string nick, string channel, vector<string> words)
 		string result = httpNet.get(path);
 		//cout << result << endl;
 	}
-	else if(words.at(0) == "test")
+	else if(words.at(0) == "alias")
 	{
-		if(words.size() > 1)
+		if(words.size() < 3)
 		{
-			ircNet.sendMsg(channel, reply + "Hostname: " + stringUtils::urlHostname(words.at(1)) + " Path: " + stringUtils::urlPath(words.at(1)) + " Port: " + stringUtils::urlPort(words.at(1)));
+			ircNet.sendMsg(channel, reply + "Format: !alias name command");
+		}
+		else
+		{
+			alias result;
+			result.word = words.at(1);
+			vector<string> command = words;
+			command.erase(command.begin(), command.begin()+2);
+			result.command = command;
+			aliases.push_back(result);
+			ircNet.sendMsg(channel, reply + "Aliased '" + result.word + "' to '" + stringUtils::joinWords(command)) + "'.";
+		}
+	}
+	else
+	{
+		for(int i=0; i<aliases.size(); ++i)
+		{
+			if(words.at(0) == aliases.at(i).word)
+			{
+				handleCommand(nick, channel, aliases.at(i).command);
+				break;
+			}
 		}
 	}
 	return 0;
