@@ -133,6 +133,15 @@ int main(int argc, char *argv[])
 						}
 						ircNet.sendMsg(stringUtils::msgChannel(message), reply);
 					}
+					if(words.at(1) == "you're" || words.at(1) == "You're")
+					{
+						string reply = stringUtils::msgNick(message) + ": No, you're";
+						for(int i=2; i<words.size(); ++i)
+						{
+							reply += " " + words.at(i);
+						}
+						ircNet.sendMsg(stringUtils::msgChannel(message), reply);
+					}
 				}
 			}
 		}
@@ -387,6 +396,25 @@ int handleCommand(string nick, string channel, vector<string> words)
 			ircNet.sendMsg(channel, reply + "Aliased '" + result.word + "' to '" + stringUtils::joinWords(command)) + "'.";
 		}
 	}
+	else if(words.at(0) == "unalias")
+	{
+		if(words.size() < 2)
+		{
+			ircNet.sendMsg(channel, reply + "Format: !unalias name");
+		}
+		else
+		{
+			for(int i=0; i<aliases.size(); ++i)
+			{
+				if(words.at(1) == aliases.at(i).word)
+				{
+					ircNet.sendMsg(channel, reply + "Unaliasing '" + words.at(1) + "', was aliased to '" + stringUtils::joinWords(aliases.at(i).command) + "'.");
+					aliases.erase(aliases.begin()+i);
+					break;
+				}
+			}
+		}
+	}
 	else
 	{
 		for(int i=0; i<aliases.size(); ++i)
@@ -409,7 +437,7 @@ string getQuestion(int questionNum)
 	}
 	else
 	{
-		return questions.at(questionNum-1).question;
+		return "[" + questions.at(questionNum-1).category + "] " + questions.at(questionNum-1).question;
 	}
 }
 
