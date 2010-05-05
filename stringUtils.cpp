@@ -173,3 +173,10 @@ string stringUtils::urlPort(string url)
 		return "80"; //default to returning the http port
 	}
 }
+
+string stringUtils::toLower(string originalString)
+{
+	string s = originalString;
+	transform(s.begin(), s.end(), s.begin(), (int(*)(int)) tolower);
+	return s;
+}

@@ -1,7 +1,5 @@
 #include "network.h"
 
-using namespace std;
-
 network::network(string hostname, string port)
 {
 	struct addrinfo *p;

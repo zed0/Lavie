@@ -1,8 +1,6 @@
 #include "irc.h"
 #include <algorithm>
 
-using namespace std;
-
 irc::irc()
 {
 	connected = false;

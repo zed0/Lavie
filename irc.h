@@ -1,10 +1,12 @@
-#ifndef NETWORK_H
-#define NETWORK_H
+#ifndef IRC_H
+#define IRC_H
 #include "network.h"
-#endif
 #include <vector>
 
-using namespace std;
+using std::vector;
+using std::cout;
+using std::endl;
+using std::cerr;
 
 class irc
 {
@@ -37,3 +39,5 @@ class irc
 		//send a /me to the specified channel
 		int sendMe(string channel, string message);
 };
+
+#endif

@@ -1,7 +1,5 @@
 #include "http.h"
 
-using namespace std;
-
 http::http(string hostname, string portname)
 {
 	host = hostname;

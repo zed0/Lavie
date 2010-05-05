@@ -1,3 +1,6 @@
+#ifndef NETWORK_H
+#define NETWORK_H
+
 #include <iostream>
 #include <string>
 #include <sys/types.h>
@@ -8,7 +11,10 @@
 #include <fcntl.h>
 #include <errno.h>
 
-using namespace std;
+using std::string;
+using std::cout;
+using std::endl;
+using std::cerr;
 
 class network
 {
@@ -26,3 +32,5 @@ class network
 		//send a message to the network not including newline (returns the number of bytes send)
 		int sendMsg(string message);
 };
+
+#endif

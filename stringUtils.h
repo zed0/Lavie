@@ -1,8 +1,15 @@
+#ifndef STRINGUTILS_H
+#define STRINGUTILS_H
+
 #include <string>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
-using namespace std;
+using std::string;
+using std::vector;
+using std::istringstream;
+using std::ostringstream;
 
 namespace stringUtils
 {
@@ -26,6 +33,7 @@ namespace stringUtils
 	string urlHostname(string url);
 	string urlPath(string url);
 	string urlPort(string url);
+	string toLower(string originalString);
 
 	//Due to C++ being rubish you have to declare and implement templates in the same file,
 	//thus these are implemented here.
@@ -46,3 +54,5 @@ namespace stringUtils
 		return stream.str();
 	}
 }
+
+#endif
