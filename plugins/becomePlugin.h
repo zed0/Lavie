@@ -28,6 +28,7 @@ class becomePlugin:public plugin
 				{
 					ircNet.setNick(words.at(1));
 				}
+				return 1;
 			}
 			return 0;
 		}

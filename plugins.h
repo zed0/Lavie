@@ -11,6 +11,7 @@
 #include "plugins/aliasPlugin.h"
 #include "plugins/becomePlugin.h"
 #include "plugins/quizPlugin.h"
+#include "plugins/ircExtraPlugin.h"
 
 class plugins
 {
@@ -28,6 +29,7 @@ class plugins
 			pluginList.push_back(new aliasPlugin);
 			pluginList.push_back(new becomePlugin);
 			pluginList.push_back(new quizPlugin);
+			pluginList.push_back(new ircExtraPlugin);
 		}
 		//handle commads for all plugins, returns 0 on not matched, 1 on matched
 		int handleCommand(string nick, string channel, vector<string> words);

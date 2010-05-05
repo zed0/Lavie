@@ -1,6 +1,6 @@
 #define BOT_NICK "Lavie"
 #define BOT_DESC "An IRC bot made by zed0 and Zaer"
-#define COMMAND_CHAR '!'
+#define COMMAND_CHAR '-'
 
 #include <cstdlib>
 #include <sstream>
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 		}
 		if(string(argv[i]) == "--questionfile" && argc>i+1)
 		{
-			//cout << loadQuestions(argv[i+1]) << endl;
+			cout << quizPlugin.loadQuestions(argv[i+1]) << endl;
 			++i;
 		}
 	}
@@ -58,7 +58,6 @@ int main(int argc, char *argv[])
 		pluginList.doTick();
 		if(ircNet.checkMessages(message))
 		{
-			//cout << message;
 			if(message.find("PRIVMSG",0) != string::npos)
 			{
 				vector<string> words = stringUtils::msgWords(message);
@@ -67,22 +66,6 @@ int main(int argc, char *argv[])
 					words.at(0).erase(0,1); //strip the command character off the front
 					handleAllCommands(stringUtils::msgNick(message), stringUtils::msgChannel(message), words);
 				}
-				/*else if(currentQuestion != 0) //Handle valid answers to the current question
-				{
-					for(int i=0; i<questions.at(currentQuestion-1).answer.size(); ++i)
-					{
-						if(stringUtils::joinWords(words) == questions.at(currentQuestion-1).answer.at(i))
-						{
-							ircNet.sendMsg(stringUtils::msgChannel(message), stringUtils::msgNick(message) + ": Correct answer!  Congratulations!");
-							currentQuestion = 0;
-							if(continuousQuestions == true)
-							{
-								//setTimedMsg("", stringUtils::msgChannel(message), stringUtils::tokenize("randquestion"), quizTiming);
-							}
-							break;
-						}
-					}
-				}*/
 				else if(words.at(0) == ircNet.getNick() + ":")
 				{
 					if(words.at(1) == "you" || words.at(1) == "You")

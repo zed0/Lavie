@@ -129,7 +129,7 @@ class quizPlugin:public plugin
 			{
 				if(words.size() < 2)
 				{
-					ircNet.sendMsg(channel, reply + "Format: !loadquestions file");
+					ircNet.sendMsg(channel, reply + "Format: loadquestions file");
 				}
 				else
 				{
