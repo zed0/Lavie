@@ -1,3 +1,6 @@
+#ifndef IRCEXTRAPLUGIN_H
+#define IRCEXTRAPLUGIN_H
+
 #include "../plugin.h"
 
 using namespace std;
@@ -42,3 +45,5 @@ class ircExtraPlugin:public plugin
 			return 0;
 		}
 };
+
+#endif
