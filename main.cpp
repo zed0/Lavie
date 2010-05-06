@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 		}
 		if(string(argv[i]) == "--questionfile" && argc>i+1)
 		{
-			cout << quizPlugin.loadQuestions(argv[i+1]) << endl;
+			//cout << quizPlugin::loadQuestions(argv[i+1]) << endl;
 			++i;
 		}
 	}

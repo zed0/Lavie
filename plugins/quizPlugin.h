@@ -23,7 +23,7 @@ class quizPlugin:public plugin
 		static int currentQuestion;
 		static int quizTiming;
 		static bool continuousQuestions;
-
+	public:
 		string loadQuestions(string fileName)
 		{
 			stringstream questionFile;
@@ -104,7 +104,6 @@ class quizPlugin:public plugin
 			}
 		}
 
-	public:
 		int handleCommand(string nick, string channel, vector<string> words)
 		{
 			string reply = "";
