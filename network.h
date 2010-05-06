@@ -1,6 +1,7 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
+#include <stdio.h>
 #include <iostream>
 #include <string>
 #include <sys/types.h>
