@@ -199,8 +199,16 @@ class quizPlugin:public plugin
 				else
 				{
 					int newTiming = stringUtils::fromString<int>(words.at(1));
-					ircNet.sendMsg(channel, reply + "Setting quiz timing to " + stringUtils::toString(newTiming) + ".");
-					quizTiming = newTiming;
+					if(newTiming < 0)
+					{
+						reply += "Time must be positive.";
+						ircNet.sendMsg(channel, reply);
+					}
+					else
+					{
+						ircNet.sendMsg(channel, reply + "Setting quiz timing to " + stringUtils::toString(newTiming) + ".");
+						quizTiming = newTiming;
+					}
 				}
 				return 1;
 			}

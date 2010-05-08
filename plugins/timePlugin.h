@@ -75,6 +75,10 @@ class timePlugin:public plugin
 
 		static int setTimedMsg(string nick, string channel, vector<string> words, int seconds)
 		{
+			if(time < 0)
+			{
+				return 1;
+			}
 			static int id = 0;
 			++id;
 			timedMsg result;
