@@ -42,9 +42,16 @@ class timePlugin:public plugin
 					}
 					else
 					{
-						reply += "Setting timer for " + stringUtils::toString(time) + " seconds.";
+						if(time < 0)
+						{
+							reply += "Time must be positive.";
+						}
+						else
+						{
+							reply += "Setting timer for " + stringUtils::toString(time) + " seconds.";
+							setTimedMsg(nick, channel, stringUtils::tokenize("reply Times up"), time);
+						}
 						ircNet.sendMsg(channel, reply);
-						setTimedMsg(nick, channel, stringUtils::tokenize("reply Times up"), time);
 					}
 				}
 				return 1;
