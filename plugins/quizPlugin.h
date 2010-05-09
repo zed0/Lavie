@@ -199,7 +199,7 @@ class quizPlugin:public plugin
 				else
 				{
 					int newTiming = stringUtils::fromString<int>(words.at(1));
-					if(newTiming < 0)
+					if(newTiming <= 0)
 					{
 						reply += "Time must be positive.";
 						ircNet.sendMsg(channel, reply);
