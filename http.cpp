@@ -15,7 +15,8 @@ http::~http()
 string http::get(string path)
 {
 	server->sendMsg("GET " + path + " HTTP/1.1");
-	server->sendMsg("Host: " + host + ":" + port);
+	//server->sendMsg("Host: " + host + ":" + port);
+	server->sendMsg("Host: " + host);
 	server->sendMsg("Connection: close");
 	server->sendMsg("");
 	stringstream total;
