@@ -32,11 +32,28 @@ class foo:public plugin
 			return 0;
 		}
 
-		//This function if run every time the program ticks.
+		//This function is run every time the program ticks.
 		//You can use this to manipulate stored variables etc.
-		//Should return 1 if it did anything, oterwise 0.
+		//Should return 1 if it did anything, otherwise 0.
 		int doTick()
 		{
+			return 0;
+		}
+
+		//This function is run at the program startup.
+		//the args argument is the command line that is used to start the program.
+		//This can be used to set things from the command line at startup.
+		//Should return 0.
+		int startupOptions(vector<string> args)
+		{
+			for(int i=0; i<args.size(); ++i)
+			{
+				if(args.at(i) == "--foo" && args.size() > i+1)
+				{
+					//do stuff with args.at(i) and args.at(i+1)
+					++i;
+				}
+			}
 			return 0;
 		}
 };

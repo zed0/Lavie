@@ -37,6 +37,8 @@ class plugins
 		int handleMessage(string nick, string channel, vector<string> words);
 		//allows each plugin to run something each tick.  Returns the number of plugins that did something.
 		int doTick();
+		//allows each plugin to check the command line arguments and use them as they see fit.
+		int startupOptions(vector<string> args);
 };
 
 #endif

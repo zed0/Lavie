@@ -18,6 +18,7 @@ using std::ios_base;
 int handleAllCommands(string nick, string channel, vector<string> words);
 int handleAllMessages(string nick, string channel, vector<string> words);
 //Should return 1 if it did anything, oterwise 0.
+int handleAllStartupOptions(vector<string> args);
 
 irc ircNet;
 plugins pluginList;
@@ -25,7 +26,8 @@ plugins pluginList;
 int main(int argc, char *argv[])
 {
 	srand(time(NULL));
-	if(argc <3)
+	vector<string> args(argv, argv + argc);
+	if(args.size() <3)
 	{
 		cerr << "usage: " + string(argv[0]) + " hostname port [options]" << endl;
 		return 1;
@@ -33,24 +35,7 @@ int main(int argc, char *argv[])
 	ircNet.setNick(BOT_NICK);
 	ircNet.setDesc(BOT_DESC);
 	ircNet.joinChannel(INITIAL_CHAN);
-	for(int i=0; i<argc; ++i)
-	{
-		if(string(argv[i]) == "--nick" && argc>i+1)
-		{
-			ircNet.setNick(argv[i+1]);
-			++i;
-		}
-		if(string(argv[i]) == "--channel" && argc>i+1)
-		{
-			ircNet.joinChannel(argv[i+1]);
-			++i;
-		}
-		if(string(argv[i]) == "--questionfile" && argc>i+1)
-		{
-			//cout << quizPlugin::loadQuestions(argv[i+1]) << endl;
-			++i;
-		}
-	}
+	handleAllStartupOptions(args);
 	ircNet.connect(argv[1], argv[2]);
 	string message;
 	while(true)
@@ -121,5 +106,11 @@ int handleAllCommands(string nick, string channel, vector<string> words)
 int handleAllMessages(string nick, string channel, vector<string> words)
 {
 	pluginList.handleMessage(nick, channel, words);
+	return 0;
+}
+
+int handleAllStartupOptions(vector<string> args)
+{
+	pluginList.startupOptions(args);
 	return 0;
 }

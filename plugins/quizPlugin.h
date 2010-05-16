@@ -242,8 +242,16 @@ class quizPlugin:public plugin
 			return 0;
 		}
 
-		int doTick()
+		int startupOptions(vector<string> args)
 		{
+			for(int i=0; i<args.size(); ++i)
+			{
+				if(args.at(i) == "--questionfile" && args.size() > i+1)
+				{
+					cout << loadQuestions(args.at(i+1)) << endl;
+					++i;
+				}
+			}
 			return 0;
 		}
 };

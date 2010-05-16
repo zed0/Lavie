@@ -33,13 +33,21 @@ class ircExtraPlugin:public plugin
 			}
 			return 0;
 		}
-		int handleMessage(string nick, string channel, vector<string> words)
+		int startupOptions(vector<string> args)
 		{
-			return 0;
-		}
-
-		int doTick()
-		{
+			for(int i=0; i<args.size(); ++i)
+			{
+				if(args.at(i) == "--channel" && args.size() > i+1)
+				{
+					ircNet.joinChannel(args.at(i+1));
+					++i;
+				}
+				else if(args.at(i) == "--nick" && args.size() > i+1)
+				{
+					ircNet.setNick(args.at(i+1));
+					++i;
+				}
+			}
 			return 0;
 		}
 };

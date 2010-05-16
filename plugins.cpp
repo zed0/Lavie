@@ -33,3 +33,13 @@ int plugins::doTick()
 	}
 	return count;
 }
+
+int plugins::startupOptions(vector<string> args)
+{
+	int count = 0;
+	for(int i=0; i<pluginList.size(); ++i)
+	{
+		count += pluginList.at(i)->startupOptions(args);
+	}
+	return count;
+}
