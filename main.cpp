@@ -51,27 +51,6 @@ int main(int argc, char *argv[])
 					words.at(0).erase(0,1); //strip the command character off the front
 					handleAllCommands(stringUtils::msgNick(message), stringUtils::msgChannel(message), words);
 				}
-				else if(words.at(0) == ircNet.getNick() + ":")
-				{
-					if(words.at(1) == "you" || words.at(1) == "You")
-					{
-						string reply = stringUtils::msgNick(message) + ": No, you";
-						for(int i=2; i<words.size(); ++i)
-						{
-							reply += " " + words.at(i);
-						}
-						ircNet.sendMsg(stringUtils::msgChannel(message), reply);
-					}
-					if(words.at(1) == "you're" || words.at(1) == "You're")
-					{
-						string reply = stringUtils::msgNick(message) + ": No, you're";
-						for(int i=2; i<words.size(); ++i)
-						{
-							reply += " " + words.at(i);
-						}
-						ircNet.sendMsg(stringUtils::msgChannel(message), reply);
-					}
-				}
 				handleAllMessages(stringUtils::msgNick(message), stringUtils::msgChannel(message), words);
 			}
 		}

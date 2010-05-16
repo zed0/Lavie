@@ -33,6 +33,33 @@ class ircExtraPlugin:public plugin
 			}
 			return 0;
 		}
+
+		int handleMessage(string nick, string channel, vector<string> words)
+		{
+			if(words.at(0) == ircNet.getNick() + ":")
+			{
+				if(words.at(1) == "you" || words.at(1) == "You")
+				{
+					string reply = nick + ": No, you";
+					for(int i=2; i<words.size(); ++i)
+					{
+						reply += " " + words.at(i);
+					}
+					ircNet.sendMsg(channel, reply);
+				}
+				if(words.at(1) == "you're" || words.at(1) == "You're")
+				{
+					string reply = nick + ": No, you're";
+					for(int i=2; i<words.size(); ++i)
+					{
+						reply += " " + words.at(i);
+					}
+					ircNet.sendMsg(channel, reply);
+				}
+			}
+			return 0;
+		}
+
 		int startupOptions(vector<string> args)
 		{
 			for(int i=0; i<args.size(); ++i)
