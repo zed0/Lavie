@@ -68,14 +68,6 @@ class quizPlugin:public plugin
 				result.question = part;
 				questions.push_back(result);
 				currentQuestion.clear();
-		/*
-				cout << "Question " << result.id << "; file: " << result.file << "; category:" << result.category << "; answers: ";
-				for(int i=0; i<result.answer.size(); ++i)
-				{
-					cout << result.answer.at(i) << "/";
-				}
-				cout << "/" << result.question << endl;
-		*/
 			}
 			return "Finished loading " + stringUtils::toString(id) + " questions from " + fileName + " (total now " + stringUtils::toString(questions.size()) + ").";
 		}
