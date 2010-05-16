@@ -1,6 +1,7 @@
 #define BOT_NICK "Lavie"
 #define BOT_DESC "An IRC bot made by zed0 and Zaer"
 #define COMMAND_CHAR '-'
+#define INITIAL_CHAN "#stuff"
 
 #include <cstdlib>
 #include <sstream>
@@ -31,7 +32,7 @@ int main(int argc, char *argv[])
 	}
 	ircNet.setNick(BOT_NICK);
 	ircNet.setDesc(BOT_DESC);
-	ircNet.joinChannel("#stuff");
+	ircNet.joinChannel(INITIAL_CHAN);
 	for(int i=0; i<argc; ++i)
 	{
 		if(string(argv[i]) == "--nick" && argc>i+1)
@@ -51,7 +52,6 @@ int main(int argc, char *argv[])
 		}
 	}
 	ircNet.connect(argv[1], argv[2]);
-	ircNet.sendMsg("#stuff", "Ohayo everybody!");
 	string message;
 	while(true)
 	{

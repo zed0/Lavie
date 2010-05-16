@@ -22,6 +22,8 @@ class irc
 		int connect(string hostname, string port);
 		//join the specified channel
 		int joinChannel(string channel);
+		//part the specified channel
+		int partChannel(string channel);
 		//check messages returns 0 if you don't need to do anything about them
 		//puts the message in the buffer
 		//NB: this will deal with PINGs etc.

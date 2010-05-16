@@ -65,6 +65,27 @@ int irc::joinChannel(string channel)
 	return 0;
 }
 
+int irc::partChannel(string channel)
+{
+	for(int i=0; i<channels.size(); ++i)
+	{
+		if(channels.at(i) == channel)
+		channels.push_back(channel);
+		if(connected)
+		{
+			server->sendMsg("PART " + channel);
+			string message;
+			while(message.find("PART :" + channel, 0) != string::npos)
+			{
+				server->recieveMsg(message);
+			}
+		}
+		cout << "parted " << channel << endl;
+		return 0;
+	}
+	return 1;
+}
+
 int irc::checkMessages(string &buffer)
 {
 	if(!connected)
