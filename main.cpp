@@ -83,24 +83,6 @@ int handleAllCommands(string nick, string channel, vector<string> words)
 {
 	pluginList.handleCommand(nick, channel, words);
 	return 0;
-	if(words.at(0) == "httpget")
-	{
-		string hostname = "zed0.uwcs.co.uk";
-		string path = "/";
-		string port = "80";
-		if(words.size() > 1)
-		{
-			hostname = stringUtils::urlHostname(words.at(1));
-			path = stringUtils::urlPath(words.at(1));
-			port = stringUtils::urlPort(words.at(1));
-		}
-		cout << "Getting " << hostname << " " << path << " " << port << endl;
-		http httpNet(hostname, port);
-		string result = httpNet.get(path);
-		//ircNet.sendMsg(channel, reply + result);
-		cout << result << endl;
-	}
-	return 0;
 }
 
 int handleAllMessages(string nick, string channel, vector<string> words)
