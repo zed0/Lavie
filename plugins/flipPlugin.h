@@ -19,13 +19,23 @@ class flipPlugin:public plugin
 			}
 			if(words.at(0) == "flip")
 			{
-				if(rand()%2 >= 1)
+				if(words.size() >= 2)
 				{
-					reply += "Heads!";
+					words.erase(words.begin());
+					vector<string> options = stringUtils::split(words, "or");
+					int option = rand()%options.size();
+					reply += "I choose : " + options.at(option);
 				}
 				else
 				{
-					reply += "Tails!";
+					if(rand()%2 >= 1)
+					{
+						reply += "Heads!";
+					}
+					else
+					{
+						reply += "Tails!";
+					}
 				}
 				ircNet.sendMsg(channel, reply);
 				return 1;

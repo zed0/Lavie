@@ -21,6 +21,8 @@ namespace stringUtils
 	vector<string> msgWords(string message);
 	//tokenize the message
 	vector<string> tokenize(string message);
+	//split a message with a string delimiter
+	vector<string> split(vector<string> words, string seperator);
 	//checks whether the character is numeric
 	bool charIsNum(char character);
 	//parses the string into a int given a time formated as 1d2h3m4s etc
@@ -33,6 +35,7 @@ namespace stringUtils
 	string urlHostname(string url);
 	string urlPath(string url);
 	string urlPort(string url);
+	//make the string lower case:
 	string toLower(string originalString);
 
 	//Due to C++ being rubish you have to declare and implement templates in the same file,

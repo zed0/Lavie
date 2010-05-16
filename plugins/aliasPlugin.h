@@ -90,11 +90,6 @@ class aliasPlugin:public plugin
 			return 0;
 		}
 
-		int doTick()
-		{
-			return 0;
-		}
-
 		static bool addAlias(string aliasName, vector<string> command)
 		{
 			alias result;

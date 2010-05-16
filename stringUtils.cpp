@@ -37,6 +37,29 @@ vector<string> stringUtils::tokenize(string message)
 	return result;
 }
 
+vector<string> stringUtils::split(vector<string> words, string seperator)
+{
+	vector<string> result;
+	vector<string> current;
+	for(int i=0; i<words.size(); ++i)
+	{
+		if(words.at(i) == seperator && !current.empty())
+		{
+			result.push_back(stringUtils::joinWords(current));
+			current.clear();
+		}
+		else
+		{
+			current.push_back(words.at(i));
+		}
+	}
+	if(!current.empty())
+	{
+		result.push_back(stringUtils::joinWords(current));
+	}
+	return result;
+}
+
 int stringUtils::parseTime(string time)
 {
 	int result = 0;
