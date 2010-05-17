@@ -203,3 +203,16 @@ string stringUtils::toLower(string originalString)
 	transform(s.begin(), s.end(), s.begin(), (int(*)(int)) tolower);
 	return s;
 }
+
+int stringUtils::findWord(vector<string> haystack, string needle)
+{
+	int i;
+	for(i=0; i<haystack.size(); ++i)
+	{
+		if(haystack.at(i) == needle)
+		{
+			return i;
+		}
+	}
+	return -1;
+}

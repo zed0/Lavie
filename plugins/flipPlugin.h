@@ -21,10 +21,24 @@ class flipPlugin:public plugin
 			{
 				if(words.size() >= 2)
 				{
-					words.erase(words.begin());
-					vector<string> options = stringUtils::split(words, "or");
-					int option = rand()%options.size();
-					reply += "I choose : " + options.at(option);
+					if(stringUtils::findWord(words, "or")>=0)
+					{
+						words.erase(words.begin());
+						vector<string> options = stringUtils::split(words, "or");
+						int option = rand()%options.size();
+						reply += "I choose: " + options.at(option);
+					}
+					else
+					{
+						if(rand()%2 >= 1)
+						{
+							reply += "Yes!";
+						}
+						else
+						{
+							reply += "No!";
+						}
+					}
 				}
 				else
 				{

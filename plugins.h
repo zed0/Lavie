@@ -8,10 +8,10 @@
 #include "plugins/inPlugin.h"
 #include "plugins/flipPlugin.h"
 #include "plugins/countPlugin.h"
-#include "plugins/aliasPlugin.h"
 #include "plugins/becomePlugin.h"
 #include "plugins/quizPlugin.h"
 #include "plugins/ircExtraPlugin.h"
+#include "plugins/aliasPlugin.h"
 
 class plugins
 {
@@ -26,10 +26,11 @@ class plugins
 			pluginList.push_back(new inPlugin);
 			pluginList.push_back(new flipPlugin);
 			pluginList.push_back(new countPlugin);
-			pluginList.push_back(new aliasPlugin);
 			pluginList.push_back(new becomePlugin);
 			pluginList.push_back(new quizPlugin);
 			pluginList.push_back(new ircExtraPlugin);
+			//alias plugin should go last to stop other commands being realiased.
+			pluginList.push_back(new aliasPlugin);
 		}
 		//handle commads for all plugins, returns 0 on not matched, 1 on matched
 		int handleCommand(string nick, string channel, vector<string> words);

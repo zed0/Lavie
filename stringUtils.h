@@ -37,6 +37,8 @@ namespace stringUtils
 	string urlPort(string url);
 	//make the string lower case:
 	string toLower(string originalString);
+	//find a string in a vector of strings
+	int findWord(vector<string> haystack, string needle);
 
 	//Due to C++ being rubish you have to declare and implement templates in the same file,
 	//thus these are implemented here.
