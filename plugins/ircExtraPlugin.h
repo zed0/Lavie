@@ -64,7 +64,7 @@ class ircExtraPlugin:public plugin
 		{
 			for(int i=0; i<args.size(); ++i)
 			{
-				if(args.at(i) == "--channel" && args.size() > i+1)
+				if(args.at(i) == "--channel" || args.at(i) == "--chan" || args.at(i) == "--join" && args.size() > i+1)
 				{
 					ircNet.joinChannel(args.at(i+1));
 					++i;
