@@ -1,5 +1,4 @@
 #include "irc.h"
-#include <algorithm>
 
 irc::irc()
 {
@@ -12,7 +11,7 @@ int irc::connect(string hostname, string port)
 {
 	server = new network(hostname, port);
 	string message;
-	while(message.find("NOTICE Auth :*** Looking up your hostname...", 0) == string::npos)
+	while(stringUtils::toLower(message).find("notice auth :***", 0) == string::npos)
 	{
 		server->recieveMsg(message);
 	}
@@ -31,7 +30,8 @@ int irc::connect(string hostname, string port)
 		}
 	}
 	server->sendMsg("USER " + nick + " 0 * : " + description);
-	while(message.find("NOTICE Auth :Welcome", 0) == string::npos)
+	//while(message.find("NOTICE Auth :Welcome", 0) == string::npos)
+	while(message.find("001 " + nick, 0) == string::npos)
 	{
 		server->recieveMsg(message);
 	}

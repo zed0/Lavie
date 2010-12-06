@@ -1,7 +1,9 @@
 #ifndef IRC_H
 #define IRC_H
 #include "network.h"
+#include "stringUtils.h"
 #include <vector>
+#include <algorithm>
 
 using std::vector;
 using std::cout;
