@@ -36,7 +36,7 @@ class ircExtraPlugin:public plugin
 
 		int handleMessage(string nick, string channel, vector<string> words)
 		{
-			if(words.at(0) == ircNet.getNick() + ":")
+			if(words.at(0) == ircNet.getNick() + ":" && words.size() >= 2)
 			{
 				if(words.at(1) == "you" || words.at(1) == "You")
 				{
