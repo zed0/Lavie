@@ -3,7 +3,7 @@
 network::network(string hostname, string port)
 {
 	struct addrinfo *p;
-	struct addrinfo hints = {0};
+	struct addrinfo hints;
 	sockfd = 0;
 	int status;
 	char ipstr[INET6_ADDRSTRLEN];

@@ -78,7 +78,7 @@ class aliasPlugin:public plugin
 			}
 			else
 			{
-				for(int i=0; i<aliases.size(); ++i)
+				for(size_t i=0; i<aliases.size(); ++i)
 				{
 					if(words.at(0) == aliases.at(i).word)
 					{
@@ -101,7 +101,7 @@ class aliasPlugin:public plugin
 
 		static bool deleteAlias(string aliasName)
 		{
-			for(int i=0; i<aliases.size(); ++i)
+			for(size_t i=0; i<aliases.size(); ++i)
 			{
 				if(aliases.at(i).word == aliasName)
 				{
@@ -114,7 +114,7 @@ class aliasPlugin:public plugin
 
 		static string showAlias(string aliasName)
 		{
-			for(int i=0; i<aliases.size(); ++i)
+			for(size_t i=0; i<aliases.size(); ++i)
 			{
 				if(aliases.at(i).word == aliasName)
 				{

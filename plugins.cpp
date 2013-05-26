@@ -2,7 +2,7 @@
 
 int plugins::handleCommand(string nick, string channel, vector<string> words)
 {
-	for(int i=0; i<pluginList.size(); ++i)
+	for(size_t i=0; i<pluginList.size(); ++i)
 	{
 		if(pluginList.at(i)->handleCommand(nick, channel, words) >= 2)
 		{
@@ -14,7 +14,7 @@ int plugins::handleCommand(string nick, string channel, vector<string> words)
 
 int plugins::handleMessage(string nick, string channel, vector<string> words)
 {
-	for(int i=0; i<pluginList.size(); ++i)
+	for(size_t i=0; i<pluginList.size(); ++i)
 	{
 		if(pluginList.at(i)->handleMessage(nick, channel, words) >= 2)
 		{
@@ -27,7 +27,7 @@ int plugins::handleMessage(string nick, string channel, vector<string> words)
 int plugins::doTick()
 {
 	int count = 0;
-	for(int i=0; i<pluginList.size(); ++i)
+	for(size_t i=0; i<pluginList.size(); ++i)
 	{
 		count += pluginList.at(i)->doTick();
 	}
@@ -37,7 +37,7 @@ int plugins::doTick()
 int plugins::startupOptions(vector<string> args)
 {
 	int count = 0;
-	for(int i=0; i<pluginList.size(); ++i)
+	for(size_t i=0; i<pluginList.size(); ++i)
 	{
 		count += pluginList.at(i)->startupOptions(args);
 	}

@@ -61,7 +61,7 @@ class timePlugin:public plugin
 
 		int doTick()
 		{
-			for(int i=0; i<timedMessages.size(); ++i)
+			for(size_t i=0; i<timedMessages.size(); ++i)
 			{
 				if(std::time(NULL) > timedMessages.at(i).time)
 				{

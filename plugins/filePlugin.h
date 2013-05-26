@@ -12,7 +12,7 @@ class filePlugin:public plugin
 {
 	private:
 	public:
-		int handleCommand(string nick, string channel, vector<string> words)
+		int handleCommand(string /*nick*/, string /*channel*/, vector<string> /*words*/)
 		{
 			return 0;
 		}
