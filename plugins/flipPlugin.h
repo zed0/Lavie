@@ -59,14 +59,10 @@ class flipPlugin:public plugin
 				ircNet.sendMe(channel, "flops about on the floor.");
 				return 1;
 			}
-			
+
 			return 0;
 		}
 
-		int doTick()
-		{
-			return 0;
-		}
 };
 
 #endif

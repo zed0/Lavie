@@ -17,11 +17,6 @@ class filePlugin:public plugin
 			return 0;
 		}
 
-		int doTick()
-		{
-			return 0;
-		}
-
 		static void loadFile(const string& fileName, stringstream &result)
 		{
 			ifstream questionFile(fileName.c_str(), ifstream::in);

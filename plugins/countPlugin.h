@@ -25,10 +25,6 @@ class countPlugin:public plugin
 			return 0;
 		}
 
-		int doTick()
-		{
-			return 0;
-		}
 };
 
 #endif
