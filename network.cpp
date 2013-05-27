@@ -1,12 +1,16 @@
 #include "network.h"
 
+#include <cstring>
+
 network::network(string hostname, string port)
 {
 	struct addrinfo *p;
-	struct addrinfo hints = {0};
+	struct addrinfo hints;
 	sockfd = 0;
 	int status;
 	char ipstr[INET6_ADDRSTRLEN];
+
+	memset(&hints, 0, sizeof(hints));
 
 	hints.ai_family = AF_UNSPEC; // AF_INET or AF_INET6 to force IPv4 or IPv6
 	hints.ai_socktype = SOCK_STREAM;
@@ -117,13 +121,11 @@ int network::recieveMsg(string &result)
 
 int network::sendMsg(string message)
 {
-	int sent;
-	int len;
 	message = message + "\n";
 	cout << "Sending: " << message;
-	len = message.size();
+	const int len = message.size();
 	//sent = send(sockfd, message.c_str(), len, 0);
-	sent = send(sockfd, message.c_str(), len, MSG_NOSIGNAL);
+	send(sockfd, message.c_str(), len, MSG_NOSIGNAL);
 	//cout << "(sent " << sent << "/" << len << " bytes)" << endl;
 	return len;
 }

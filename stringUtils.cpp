@@ -41,7 +41,7 @@ vector<string> stringUtils::split(vector<string> words, string seperator)
 {
 	vector<string> result;
 	vector<string> current;
-	for(int i=0; i<words.size(); ++i)
+	for(size_t i=0; i<words.size(); ++i)
 	{
 		if(words.at(i) == seperator && !current.empty())
 		{
@@ -70,7 +70,7 @@ int stringUtils::parseTime(string time)
 		char lastChar = current.at(current.length()-1);
 		if(charIsNum(lastChar))
 		{
-			int i = 1;
+			size_t i = 1;
 			while(i <= current.length() && charIsNum(current.at(current.length()-i)))
 			{
 				++i;
@@ -122,7 +122,7 @@ bool stringUtils::charIsNum(char character)
 string stringUtils::joinWords(vector<string> words)
 {
 	string result = "";
-	for(int i=0; i<words.size(); ++i)
+	for(size_t i=0; i<words.size(); ++i)
 	{
 		result += words.at(i);
 		if(i < words.size() - 1)
@@ -206,12 +206,11 @@ string stringUtils::toLower(string originalString)
 
 int stringUtils::findWord(vector<string> haystack, string needle)
 {
-	int i;
-	for(i=0; i<haystack.size(); ++i)
+	for(size_t i=0; i<haystack.size(); ++i)
 	{
 		if(haystack.at(i) == needle)
 		{
-			return i;
+			return static_cast<int>(i);
 		}
 	}
 	return -1;

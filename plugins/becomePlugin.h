@@ -10,7 +10,7 @@ class becomePlugin:public plugin
 	private:
 
 	public:
-		int handleCommand(string nick, string channel, vector<string> words)
+		int handleCommand(const string& nick, const string& channel, const vector<string>& words)
 		{
 			string reply = "";
 			if(nick != "")
@@ -33,10 +33,6 @@ class becomePlugin:public plugin
 			return 0;
 		}
 
-		int doTick()
-		{
-			return 0;
-		}
 };
 
 #endif

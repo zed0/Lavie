@@ -7,7 +7,7 @@ class replyPlugin:public plugin
 {
 	private:
 	public:
-		int handleCommand(string nick, string channel, vector<string> words)
+		int handleCommand(const string& nick, const string& channel, const vector<string>& words)
 		{
 			string reply = "";
 			if(nick != "")
@@ -19,16 +19,16 @@ class replyPlugin:public plugin
 				if(words.size() > 1)
 				{
 					//note: editing the words vector like this is naughty, may be better to use the commented out code instead.
-					words.erase(words.begin());
-					reply += stringUtils::joinWords(words);
-					/*for(int i=1; i<words.size(); ++i)
+					//words.erase(words.begin());
+					//reply += stringUtils::joinWords(words);
+					for(size_t i=1; i<words.size(); ++i)
 					{
 						reply += words.at(i);
 						if(i < words.size() - 1)
 						{
 							reply += " ";
 						}
-					}*/
+					}
 					reply += ", Giggle.";
 				}
 				else
@@ -41,10 +41,6 @@ class replyPlugin:public plugin
 			return 0;
 		}
 
-		int doTick()
-		{
-			return 0;
-		}
 };
 
 #endif

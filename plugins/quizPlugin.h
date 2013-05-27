@@ -24,7 +24,7 @@ class quizPlugin:public plugin
 		static int quizTiming;
 		static bool continuousQuestions;
 	public:
-		string loadQuestions(string fileName)
+		string loadQuestions(const string& fileName)
 		{
 			stringstream questionFile;
 			if(fileName.find("http://")!=string::npos)
@@ -72,9 +72,9 @@ class quizPlugin:public plugin
 			return "Finished loading " + stringUtils::toString(id) + " questions from " + fileName + " (total now " + stringUtils::toString(questions.size()) + ").";
 		}
 
-		string getQuestion(int questionNum)
+		string getQuestion(size_t questionNum)
 		{
-			if(questionNum > questions.size() || questionNum <= 0)
+			if(questionNum > questions.size())
 			{
 				return "Question does not exist.";
 			}
@@ -84,9 +84,9 @@ class quizPlugin:public plugin
 			}
 		}
 
-		string getAnswer(int questionNum)
+		string getAnswer(size_t questionNum)
 		{
-			if(questionNum > questions.size() || questionNum <= 0)
+			if(questionNum > questions.size())
 			{
 				return "Question does not exist.";
 			}
@@ -96,7 +96,7 @@ class quizPlugin:public plugin
 			}
 		}
 
-		int handleCommand(string nick, string channel, vector<string> words)
+		int handleCommand(const string& nick, const string& channel, const vector<string>& words)
 		{
 			string reply = "";
 			if(nick != "")
@@ -106,10 +106,10 @@ class quizPlugin:public plugin
 
 			if(words.at(0) == "question")
 			{
-				int number = 1;
+				size_t number = 1;
 				if(words.size() > 1)
 				{
-					number = stringUtils::fromString<int>(words.at(1));
+					number = stringUtils::fromString<size_t>(words.at(1));
 				}
 				currentQuestion = number;
 				ircNet.sendMsg(channel, reply + getQuestion(number));
@@ -132,7 +132,7 @@ class quizPlugin:public plugin
 			{
 				if(questions.size() > 0)
 				{
-					int number = (rand()%(questions.size()))+1;
+					size_t number = (rand()%(questions.size()))+1;
 					currentQuestion = number;
 					ircNet.sendMsg(channel, reply + getQuestion(number));
 					timePlugin::setTimedMsg(nick, channel, stringUtils::tokenize("answer " + stringUtils::toString(number)), quizTiming);
@@ -213,11 +213,11 @@ class quizPlugin:public plugin
 			return 0;
 		}
 
-		int handleMessage(string nick, string channel, vector<string> words)
+		int handleMessage(const string& nick, const string& channel, const vector<string>& words)
 		{
 			if(currentQuestion != 0 && !questions.empty()) //Handle valid answers to the current question
 			{
-				for(int i=0; i<questions.at(currentQuestion-1).answer.size(); ++i)
+				for(size_t i=0; i<questions.at(currentQuestion-1).answer.size(); ++i)
 				{
 					if(stringUtils::toLower(stringUtils::joinWords(words)) == stringUtils::toLower(questions.at(currentQuestion-1).answer.at(i)))
 					{
@@ -234,9 +234,9 @@ class quizPlugin:public plugin
 			return 0;
 		}
 
-		int startupOptions(vector<string> args)
+		int startupOptions(const vector<string>& args)
 		{
-			for(int i=0; i<args.size(); ++i)
+			for(size_t i=0; i<args.size(); ++i)
 			{
 				if(args.at(i) == "--questionfile" && args.size() > i+1)
 				{

@@ -16,7 +16,7 @@ class aliasPlugin:public plugin
 	private:
 		static vector<alias> aliases;
 	public:
-		int handleCommand(string nick, string channel, vector<string> words)
+		int handleCommand(const string& nick, const string& channel, const vector<string>& words)
 		{
 			string reply = "";
 			if(nick != "")
@@ -78,7 +78,7 @@ class aliasPlugin:public plugin
 			}
 			else
 			{
-				for(int i=0; i<aliases.size(); ++i)
+				for(size_t i=0; i<aliases.size(); ++i)
 				{
 					if(words.at(0) == aliases.at(i).word)
 					{
@@ -90,7 +90,7 @@ class aliasPlugin:public plugin
 			return 0;
 		}
 
-		static bool addAlias(string aliasName, vector<string> command)
+		static bool addAlias(const string& aliasName, const vector<string>& command)
 		{
 			alias result;
 			result.word = aliasName;
@@ -99,9 +99,9 @@ class aliasPlugin:public plugin
 			return true;
 		}
 
-		static bool deleteAlias(string aliasName)
+		static bool deleteAlias(const string& aliasName)
 		{
-			for(int i=0; i<aliases.size(); ++i)
+			for(size_t i=0; i<aliases.size(); ++i)
 			{
 				if(aliases.at(i).word == aliasName)
 				{
@@ -112,9 +112,9 @@ class aliasPlugin:public plugin
 			return false;
 		}
 
-		static string showAlias(string aliasName)
+		static string showAlias(const string& aliasName)
 		{
-			for(int i=0; i<aliases.size(); ++i)
+			for(size_t i=0; i<aliases.size(); ++i)
 			{
 				if(aliases.at(i).word == aliasName)
 				{

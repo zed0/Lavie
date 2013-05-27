@@ -9,7 +9,7 @@ class ircExtraPlugin:public plugin
 {
 	private:
 	public:
-		int handleCommand(string nick, string channel, vector<string> words)
+		int handleCommand(const string& nick, const string& channel, const vector<string>& words)
 		{
 			string reply = "";
 			if(nick != "")
@@ -34,14 +34,14 @@ class ircExtraPlugin:public plugin
 			return 0;
 		}
 
-		int handleMessage(string nick, string channel, vector<string> words)
+		int handleMessage(const string& nick, const string& channel, const vector<string>& words)
 		{
 			if(words.at(0) == ircNet.getNick() + ":" && words.size() >= 2)
 			{
 				if(words.at(1) == "you" || words.at(1) == "You")
 				{
 					string reply = nick + ": No, you";
-					for(int i=2; i<words.size(); ++i)
+					for(size_t i=2; i<words.size(); ++i)
 					{
 						reply += " " + words.at(i);
 					}
@@ -50,7 +50,7 @@ class ircExtraPlugin:public plugin
 				if(words.at(1) == "you're" || words.at(1) == "You're")
 				{
 					string reply = nick + ": No, you're";
-					for(int i=2; i<words.size(); ++i)
+					for(size_t i=2; i<words.size(); ++i)
 					{
 						reply += " " + words.at(i);
 					}
@@ -60,11 +60,11 @@ class ircExtraPlugin:public plugin
 			return 0;
 		}
 
-		int startupOptions(vector<string> args)
+		int startupOptions(const vector<string>& args)
 		{
-			for(int i=0; i<args.size(); ++i)
+			for(size_t i=0; i<args.size(); ++i)
 			{
-				if(args.at(i) == "--channel" || args.at(i) == "--chan" || args.at(i) == "--join" && args.size() > i+1)
+				if((args.at(i) == "--channel" || args.at(i) == "--chan" || args.at(i) == "--join") && args.size() > i+1)
 				{
 					ircNet.joinChannel(args.at(i+1));
 					++i;
