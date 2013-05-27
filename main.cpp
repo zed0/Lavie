@@ -15,10 +15,10 @@
 using std::ifstream;
 using std::ios_base;
 
-int handleAllCommands(string nick, string channel, vector<string> words);
-int handleAllMessages(string nick, string channel, vector<string> words);
+int handleAllCommands(const string& nick, const string& channel, const vector<string>& words);
+int handleAllMessages(const string& nick, const string& channel, const vector<string>& words);
 //Should return 1 if it did anything, oterwise 0.
-int handleAllStartupOptions(vector<string> args);
+int handleAllStartupOptions(const vector<string>& args);
 
 irc ircNet;
 plugins pluginList;
@@ -58,19 +58,19 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-int handleAllCommands(string nick, string channel, vector<string> words)
+int handleAllCommands(const string& nick, const string& channel, const vector<string>& words)
 {
 	pluginList.handleCommand(nick, channel, words);
 	return 0;
 }
 
-int handleAllMessages(string nick, string channel, vector<string> words)
+int handleAllMessages(const string& nick, const string& channel, const vector<string>& words)
 {
 	pluginList.handleMessage(nick, channel, words);
 	return 0;
 }
 
-int handleAllStartupOptions(vector<string> args)
+int handleAllStartupOptions(const vector<string>& args)
 {
 	pluginList.startupOptions(args);
 	return 0;

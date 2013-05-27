@@ -5,9 +5,9 @@
 #include "stringUtils.h"
 
 extern irc ircNet;
-extern int handleAllCommands(string nick, string channel, vector<string> words);
-extern int handleAllMessages(string nick, string channel, vector<string> words);
-extern int handleAllMessages(string nick, string channel, vector<string> words);
+extern int handleAllCommands(const string& nick, const string& channel, const vector<string>& words);
+extern int handleAllMessages(const string& nick, const string& channel, const vector<string>& words);
+extern int handleAllMessages(const string& nick, const string& channel, const vector<string>& words);
 class plugin
 {
 	private:
