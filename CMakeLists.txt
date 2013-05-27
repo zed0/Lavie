@@ -5,8 +5,6 @@ project ( Lavie )
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -Wall -Wextra")
 
 include_directories( plugins )
-add_subdirectory( plugins )
-
 
 add_executable( Lavie
 	http.cpp
@@ -15,7 +13,8 @@ add_executable( Lavie
 	network.cpp
 	plugins.cpp
 	stringUtils.cpp
+	plugins/aliasPlugin.cpp
+	plugins/quizPlugin.cpp
+	plugins/timePlugin.cpp
 	main.cpp
 )
-
-target_link_libraries( Lavie plugins )
