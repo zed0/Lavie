@@ -1,5 +1,7 @@
 #include "network.h"
 
+#include <cstring>
+
 network::network(string hostname, string port)
 {
 	struct addrinfo *p;
@@ -7,6 +9,8 @@ network::network(string hostname, string port)
 	sockfd = 0;
 	int status;
 	char ipstr[INET6_ADDRSTRLEN];
+
+	memset(&hints, 0, sizeof(hints));
 
 	hints.ai_family = AF_UNSPEC; // AF_INET or AF_INET6 to force IPv4 or IPv6
 	hints.ai_socktype = SOCK_STREAM;

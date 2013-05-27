@@ -1,7 +1,7 @@
 #define BOT_NICK "Lavie"
 #define BOT_DESC "An IRC bot made by zed0 and Zaer"
 #define COMMAND_CHAR '-'
-#define INITIAL_CHAN "#stuff"
+#define INITIAL_CHAN "#cranman"
 
 #include <cstdlib>
 #include <sstream>
