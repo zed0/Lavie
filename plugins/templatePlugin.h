@@ -32,6 +32,14 @@ class foo:public plugin
 			return 0;
 		}
 
+		//This function is run every time the program ticks.
+		//You can use this to manipulate stored variables etc.
+		//Should return 1 if it did anything, otherwise 0.
+		int doTick()
+		{
+			return 0;
+		}
+
 		//This function is run at the program startup.
 		//the args argument is the command line that is used to start the program.
 		//This can be used to set things from the command line at startup.
