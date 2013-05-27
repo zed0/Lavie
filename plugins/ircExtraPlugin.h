@@ -9,7 +9,7 @@ class ircExtraPlugin:public plugin
 {
 	private:
 	public:
-		int handleCommand(string nick, string channel, vector<string> words)
+		int handleCommand(const string& nick, const string& channel, const vector<string>& words)
 		{
 			string reply = "";
 			if(nick != "")
@@ -34,7 +34,7 @@ class ircExtraPlugin:public plugin
 			return 0;
 		}
 
-		int handleMessage(string nick, string channel, vector<string> words)
+		int handleMessage(const string& nick, const string& channel, const vector<string>& words)
 		{
 			if(words.at(0) == ircNet.getNick() + ":" && words.size() >= 2)
 			{
@@ -60,7 +60,7 @@ class ircExtraPlugin:public plugin
 			return 0;
 		}
 
-		int startupOptions(vector<string> args)
+		int startupOptions(const vector<string>& args)
 		{
 			for(size_t i=0; i<args.size(); ++i)
 			{

@@ -24,7 +24,7 @@ class quizPlugin:public plugin
 		static int quizTiming;
 		static bool continuousQuestions;
 	public:
-		string loadQuestions(string fileName)
+		string loadQuestions(const string& fileName)
 		{
 			stringstream questionFile;
 			if(fileName.find("http://")!=string::npos)
@@ -96,7 +96,7 @@ class quizPlugin:public plugin
 			}
 		}
 
-		int handleCommand(string nick, string channel, vector<string> words)
+		int handleCommand(const string& nick, const string& channel, const vector<string>& words)
 		{
 			string reply = "";
 			if(nick != "")
@@ -213,7 +213,7 @@ class quizPlugin:public plugin
 			return 0;
 		}
 
-		int handleMessage(string nick, string channel, vector<string> words)
+		int handleMessage(const string& nick, const string& channel, const vector<string>& words)
 		{
 			if(currentQuestion != 0 && !questions.empty()) //Handle valid answers to the current question
 			{
@@ -234,7 +234,7 @@ class quizPlugin:public plugin
 			return 0;
 		}
 
-		int startupOptions(vector<string> args)
+		int startupOptions(const vector<string>& args)
 		{
 			for(size_t i=0; i<args.size(); ++i)
 			{

@@ -10,7 +10,7 @@ class flipPlugin:public plugin
 {
 	private:
 	public:
-		int handleCommand(string nick, string channel, vector<string> words)
+		int handleCommand(const string& nick, const string& channel, const vector<string>& words)
 		{
 			string reply = "";
 			if(nick != "")
@@ -23,8 +23,8 @@ class flipPlugin:public plugin
 				{
 					if(stringUtils::findWord(words, "or")>=0)
 					{
-						words.erase(words.begin());
-						vector<string> options = stringUtils::split(words, "or");
+//						words.erase(words.begin());
+						vector<string> options = stringUtils::split(vector<string>(words.begin()+1, words.end()), "or");
 						int option = rand()%options.size();
 						reply += "I choose: " + options.at(option);
 					}

@@ -18,7 +18,7 @@ class timePlugin:public plugin
 	private:
 	public:
 		static vector<timedMsg> timedMessages;
-		int handleCommand(string nick, string channel, vector<string> words)
+		int handleCommand(const string& nick, const string& channel, const vector<string>& words)
 		{
 			string reply = "";
 			if(nick != "")
@@ -73,7 +73,7 @@ class timePlugin:public plugin
 			return 1;
 		}
 
-		static int setTimedMsg(string nick, string channel, vector<string> words, int seconds)
+		static int setTimedMsg(const string& nick, const string& channel, const vector<string>& words, int seconds)
 		{
 			if(time < 0)
 			{

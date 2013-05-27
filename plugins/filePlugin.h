@@ -12,7 +12,7 @@ class filePlugin:public plugin
 {
 	private:
 	public:
-		int handleCommand(string /*nick*/, string /*channel*/, vector<string> /*words*/)
+		int handleCommand(const string& /*nick*/, const string& /*channel*/, const vector<string>& /*words*/)
 		{
 			return 0;
 		}
@@ -22,7 +22,7 @@ class filePlugin:public plugin
 			return 0;
 		}
 
-		static void loadFile(string fileName, stringstream &result)
+		static void loadFile(const string& fileName, stringstream &result)
 		{
 			ifstream questionFile(fileName.c_str(), ifstream::in);
 			if(questionFile.good())
@@ -40,7 +40,7 @@ class filePlugin:public plugin
 			}
 		}
 
-		static void loadHttp(string url, stringstream &result)
+		static void loadHttp(const string& url, stringstream &result)
 		{
 			string hostname = stringUtils::urlHostname(url);
 			string path = stringUtils::urlPath(url);
