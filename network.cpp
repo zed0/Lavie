@@ -121,13 +121,11 @@ int network::recieveMsg(string &result)
 
 int network::sendMsg(string message)
 {
-	int sent;
-	int len;
 	message = message + "\n";
 	cout << "Sending: " << message;
-	len = message.size();
+	const int len = message.size();
 	//sent = send(sockfd, message.c_str(), len, 0);
-	sent = send(sockfd, message.c_str(), len, MSG_NOSIGNAL);
+	send(sockfd, message.c_str(), len, MSG_NOSIGNAL);
 	//cout << "(sent " << sent << "/" << len << " bytes)" << endl;
 	return len;
 }

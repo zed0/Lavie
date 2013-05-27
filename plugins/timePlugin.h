@@ -75,7 +75,7 @@ class timePlugin:public plugin
 
 		static int setTimedMsg(const string& nick, const string& channel, const vector<string>& words, int seconds)
 		{
-			if(time < 0)
+			if(seconds < 0)
 			{
 				return 1;
 			}
