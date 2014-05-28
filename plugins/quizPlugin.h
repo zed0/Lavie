@@ -22,6 +22,7 @@ class quizPlugin:public plugin
 		static vector<question> questions;
 		static int currentQuestion;
 		static int quizTiming;
+		static int quizNextTiming;
 		static bool continuousQuestions;
 	public:
 		string loadQuestions(const string& fileName)
@@ -158,7 +159,7 @@ class quizPlugin:public plugin
 						currentQuestion = 0;
 						if(continuousQuestions == true)
 						{
-							timePlugin::setTimedMsg("", channel, stringUtils::tokenize("randquestion"), quizTiming);
+							timePlugin::setTimedMsg("", channel, stringUtils::tokenize("randquestion"), quizNextTiming);
 						}
 					}
 				}
@@ -225,7 +226,7 @@ class quizPlugin:public plugin
 						currentQuestion = 0;
 						if(continuousQuestions == true)
 						{
-							timePlugin::setTimedMsg("", channel, stringUtils::tokenize("randquestion"), quizTiming);
+							timePlugin::setTimedMsg("", channel, stringUtils::tokenize("randquestion"), quizNextTiming);
 						}
 						break;
 					}

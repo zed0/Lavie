@@ -34,6 +34,10 @@ int irc::connect(string hostname, string port)
 	while(message.find("001 " + nick, 0) == string::npos)
 	{
 		server->recieveMsg(message);
+		if(message.substr(0,4) == "PING")
+		{
+			server->sendMsg(message.replace(0,4,"PONG"));
+		}
 	}
 	cout << "connected to " << hostname << ":" << port << endl;
 	connected = true;
